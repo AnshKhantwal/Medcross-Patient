@@ -1,0 +1,50 @@
+<div class="calendar-container">
+  <div class="calendar-card">
+    <div class="calendar-header">
+      <h2 class="calendar-title">Select Date</h2>
+      <p class="calendar-subtitle">Choose a date to continue</p>
+    </div>
+
+    <div class="calendar-nav">
+      <button class="nav-btn" (click)="previousMonth()">
+        <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+      </button>
+      <span class="current-month">{{ currentMonth() }}</span>
+      <button class="nav-btn" (click)="nextMonth()">
+        <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+      </button>
+    </div>
+
+    <div class="calendar-grid">
+      <div class="weekdays">
+        @for (day of weekDays; track day) {
+          <span class="weekday">{{ day }}</span>
+        }
+      </div>
+      <div class="days">
+        @for (day of calendarDays(); track day.date.getTime()) {
+          <button 
+            class="day" 
+            [class.other-month]="!day.isCurrentMonth"
+            [class.today]="day.isToday"
+            [class.selected]="isSelected(day)"
+            [class.disabled]="isFutureDate(day.date)"
+            [disabled]="isFutureDate(day.date)"
+            (click)="selectDate(day)">
+            {{ day.date.getDate() }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="calendar-footer">
+      <button 
+        class="continue-btn" 
+        [disabled]="!selectedDate()"
+        (click)="confirmSelection()">
+        <span>Continue</span>
+        <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+      </button>
+    </div>
+  </div>
+</div>

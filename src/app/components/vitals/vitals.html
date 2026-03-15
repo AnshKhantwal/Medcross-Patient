@@ -1,0 +1,184 @@
+<!-- Calendar Step -->
+@if (step() === 'calendar') {
+  <div class="back-link standalone" (click)="goBack()">
+    <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+    Back to Dashboard
+  </div>
+  <app-calendar (dateSelected)="onDateSelected($event)"></app-calendar>
+}
+
+<!-- Form Step -->
+@if (step() === 'form') {
+<div class="vitals-content">
+  <div class="vitals-header">
+    <div class="back-link" (click)="goBack()">
+      <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+      Back to Calendar
+    </div>
+    <div class="selected-date-badge">
+      <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8 4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg>
+      {{ formattedDate() }}
+    </div>
+    <h1 class="vitals-title">Record Your Vitals</h1>
+    <p class="vitals-subtitle">Enter your current health measurements below</p>
+  </div>
+
+  <form class="vitals-form" (ngSubmit)="onSubmit()">
+    <div class="vitals-grid">
+      <!-- Height -->
+      <div class="vital-field">
+        <div class="vital-label">
+          <div class="vital-label-icon">
+            <svg viewBox="0 0 24 24"><path d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+          </div>
+          <span class="vital-label-text">Height</span>
+        </div>
+        <div class="vital-inputs">
+          <div class="vital-input-group">
+            <input type="number" class="vital-input" placeholder="5" min="0" max="8" 
+                   [(ngModel)]="vitals.heightFeet" name="heightFeet">
+          </div>
+          <span class="vital-unit">ft</span>
+          <div class="vital-input-group">
+            <input type="number" class="vital-input" placeholder="8" min="0" max="11"
+                   [(ngModel)]="vitals.heightInches" name="heightInches">
+          </div>
+          <span class="vital-unit">in</span>
+        </div>
+      </div>
+
+      <!-- Weight -->
+      <div class="vital-field">
+        <div class="vital-label">
+          <div class="vital-label-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 3a4 4 0 014 4c0 .73-.19 1.41-.53 2H18c.55 0 1 .45 1 1v10c0 .55-.45 1-1 1H6c-.55 0-1-.45-1-1V10c0-.55.45-1 1-1h2.53c-.34-.59-.53-1.27-.53-2a4 4 0 014-4z"/></svg>
+          </div>
+          <span class="vital-label-text">Weight</span>
+        </div>
+        <div class="vital-inputs">
+          <div class="vital-input-group">
+            <input type="number" class="vital-input" placeholder="70" min="0" step="0.1"
+                   [(ngModel)]="vitals.weight" name="weight">
+          </div>
+          <span class="vital-unit">Kg</span>
+        </div>
+      </div>
+
+      <!-- Temperature -->
+      <div class="vital-field">
+        <div class="vital-label">
+          <div class="vital-label-icon">
+            <svg viewBox="0 0 24 24"><path d="M15 13V5a3 3 0 00-6 0v8a5 5 0 106 0zm-3 6a3 3 0 01-3-3c0-1.08.58-2.03 1.44-2.56L11 13V5a1 1 0 012 0v8l.56.44A2.994 2.994 0 0115 16a3 3 0 01-3 3z"/></svg>
+          </div>
+          <span class="vital-label-text">Temperature</span>
+        </div>
+        <div class="vital-inputs">
+          <div class="vital-input-group">
+            <input type="number" class="vital-input" placeholder="98.6" min="90" max="110" step="0.1"
+                   [(ngModel)]="vitals.temperature" name="temperature">
+          </div>
+          <span class="vital-unit">°F</span>
+        </div>
+      </div>
+
+      <!-- Blood Pressure -->
+      <div class="vital-field">
+        <div class="vital-label">
+          <div class="vital-label-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          </div>
+          <span class="vital-label-text">Blood Pressure</span>
+        </div>
+        <div class="vital-inputs">
+          <div class="vital-input-group">
+            <input type="number" class="vital-input" placeholder="120" min="60" max="250"
+                   [(ngModel)]="vitals.bpSystolic" name="bpSystolic">
+          </div>
+          <span class="vital-separator">/</span>
+          <div class="vital-input-group">
+            <input type="number" class="vital-input" placeholder="80" min="40" max="150"
+                   [(ngModel)]="vitals.bpDiastolic" name="bpDiastolic">
+          </div>
+          <span class="vital-unit">mmHg</span>
+        </div>
+      </div>
+
+      <!-- Respiratory Rate -->
+      <div class="vital-field">
+        <div class="vital-label">
+          <div class="vital-label-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          </div>
+          <span class="vital-label-text">Respiratory Rate</span>
+        </div>
+        <div class="vital-inputs">
+          <div class="vital-input-group">
+            <input type="number" class="vital-input" placeholder="16" min="8" max="40"
+                   [(ngModel)]="vitals.respiratoryRate" name="respiratoryRate">
+          </div>
+          <span class="vital-unit">/Min</span>
+        </div>
+      </div>
+
+      <!-- Pulse -->
+      <div class="vital-field">
+        <div class="vital-label">
+          <div class="vital-label-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          </div>
+          <span class="vital-label-text">Pulse</span>
+        </div>
+        <div class="vital-inputs">
+          <div class="vital-input-group">
+            <input type="number" class="vital-input" placeholder="72" min="40" max="200"
+                   [(ngModel)]="vitals.pulse" name="pulse">
+          </div>
+          <span class="vital-unit">/Min</span>
+        </div>
+      </div>
+
+      <!-- SPO2 -->
+      <div class="vital-field full-width">
+        <div class="vital-label">
+          <div class="vital-label-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          </div>
+          <span class="vital-label-text">SPO2 (Oxygen Saturation)</span>
+        </div>
+        <div class="vital-inputs">
+          <div class="vital-input-group">
+            <input type="number" class="vital-input" placeholder="98" min="70" max="100"
+                   [(ngModel)]="vitals.spo2" name="spo2">
+          </div>
+          <span class="vital-unit">%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="submit-section">
+      <button type="submit" class="submit-btn">
+        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+        Submit Vitals
+      </button>
+    </div>
+  </form>
+</div>
+}
+
+<!-- Success Modal -->
+@if (showModal()) {
+  <div class="modal-overlay active" (click)="onModalOverlayClick($event)">
+    <div class="modal">
+      <div class="success-animation">
+        <div class="success-circle">
+          <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+        </div>
+      </div>
+      <h3 class="modal-title">Vitals Recorded! 🎉</h3>
+      <p class="modal-message">Your health measurements have been saved successfully. Keep up the great work on tracking your health!</p>
+      <button class="modal-btn" (click)="closeModal()">
+        Back to Dashboard
+      </button>
+    </div>
+  </div>
+}

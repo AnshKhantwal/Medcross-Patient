@@ -1,0 +1,394 @@
+.vitals-content {
+  padding: 30px 40px;
+}
+
+.vitals-header {
+  margin-bottom: 30px;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--gray-500);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 15px;
+  transition: color 0.2s ease;
+}
+
+.back-link.standalone {
+  padding: 20px 20px 0;
+}
+
+.back-link:hover {
+  color: var(--primary);
+}
+
+.back-link svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+.selected-date-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+}
+
+.selected-date-badge svg {
+  width: 20px;
+  height: 20px;
+  fill: white;
+}
+
+.vitals-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--gray-900);
+  margin-bottom: 5px;
+}
+
+.vitals-subtitle {
+  font-size: 15px;
+  color: var(--gray-500);
+}
+
+.vitals-form {
+  background: white;
+  border-radius: 24px;
+  padding: 35px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+}
+
+.vitals-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 25px;
+}
+
+.vital-field {
+  background: var(--gray-50);
+  border-radius: 20px;
+  padding: 22px;
+  border: 2px solid var(--gray-100);
+  transition: all 0.3s ease;
+}
+
+.vital-field:focus-within {
+  border-color: var(--primary);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+.vital-field.full-width {
+  grid-column: span 2;
+}
+
+.vital-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.vital-label-icon {
+  width: 38px;
+  height: 38px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.vital-label-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: white;
+}
+
+.vital-label-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gray-800);
+}
+
+.vital-inputs {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.vital-input-group {
+  flex: 1;
+  position: relative;
+}
+
+.vital-input {
+  width: 100%;
+  padding: 16px 18px;
+  border: 2px solid var(--gray-200);
+  border-radius: 14px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--gray-800);
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.vital-input::placeholder {
+  color: var(--gray-400);
+  font-weight: 400;
+}
+
+.vital-input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.vital-unit {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-500);
+  white-space: nowrap;
+}
+
+.vital-separator {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--gray-300);
+}
+
+.submit-section {
+  margin-top: 35px;
+  display: flex;
+  justify-content: center;
+}
+
+.submit-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 60px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.submit-btn:hover::before {
+  left: 100%;
+}
+
+.submit-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 50px rgba(99, 102, 241, 0.4);
+}
+
+.submit-btn svg {
+  width: 24px;
+  height: 24px;
+  fill: white;
+}
+
+/* Success Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 300;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal {
+  background: white;
+  border-radius: 32px;
+  padding: 50px;
+  text-align: center;
+  max-width: 420px;
+  margin: 20px;
+  transform: scale(0.8) translateY(20px);
+  transition: all 0.4s ease;
+}
+
+.modal-overlay.active .modal {
+  transform: scale(1) translateY(0);
+}
+
+.success-animation {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 30px;
+  position: relative;
+}
+
+.success-circle {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: scaleIn 0.5s ease-out;
+}
+
+@keyframes scaleIn {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.success-circle svg {
+  width: 60px;
+  height: 60px;
+  fill: white;
+  animation: checkDraw 0.5s ease-out 0.3s both;
+}
+
+@keyframes checkDraw {
+  0% { opacity: 0; transform: scale(0); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.modal-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--gray-900);
+  margin-bottom: 12px;
+}
+
+.modal-message {
+  font-size: 16px;
+  color: var(--gray-500);
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.modal-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 50px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  border: none;
+  border-radius: 18px;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.modal-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(99, 102, 241, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .vitals-content {
+    padding: 20px 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .vitals-content {
+    padding: 15px 12px;
+  }
+
+  .vitals-form {
+    padding: 25px 20px;
+  }
+
+  .vitals-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .vital-field.full-width {
+    grid-column: span 1;
+  }
+}
+
+@media (max-width: 576px) {
+  .vitals-title {
+    font-size: 22px;
+  }
+
+  .vital-field {
+    padding: 18px;
+  }
+
+  .vital-input {
+    padding: 14px;
+    font-size: 16px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 18px 30px;
+  }
+
+  .modal {
+    padding: 35px 25px;
+    border-radius: 24px;
+  }
+
+  .success-animation {
+    width: 100px;
+    height: 100px;
+  }
+
+  .modal-title {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 380px) {
+  .vital-inputs {
+    flex-wrap: wrap;
+  }
+}

@@ -1,0 +1,227 @@
+.calendar-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 70px);
+  padding: 20px;
+  background: linear-gradient(180deg, #f8faff 0%, #eef2ff 100%);
+}
+
+.calendar-card {
+  background: white;
+  border-radius: 28px;
+  padding: 35px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 20px 60px rgba(99, 102, 241, 0.15);
+  animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.calendar-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.calendar-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--gray-900);
+  margin-bottom: 8px;
+}
+
+.calendar-subtitle {
+  font-size: 15px;
+  color: var(--gray-500);
+}
+
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 25px;
+}
+
+.nav-btn {
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: var(--gray-100);
+  border-radius: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.nav-btn:hover {
+  background: var(--primary);
+}
+
+.nav-btn:hover svg {
+  fill: white;
+}
+
+.nav-btn svg {
+  width: 24px;
+  height: 24px;
+  fill: var(--gray-600);
+  transition: fill 0.2s ease;
+}
+
+.current-month {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+
+.calendar-grid {
+  margin-bottom: 25px;
+}
+
+.weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 15px;
+}
+
+.weekday {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-400);
+  text-transform: uppercase;
+  padding: 8px 0;
+}
+
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.day {
+  aspect-ratio: 1;
+  border: none;
+  background: transparent;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--gray-800);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.day:hover:not(.disabled):not(.selected) {
+  background: var(--gray-100);
+}
+
+.day.other-month {
+  color: var(--gray-300);
+}
+
+.day.today {
+  background: var(--gray-100);
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.day.selected {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  font-weight: 700;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+}
+
+.day.disabled {
+  color: var(--gray-300);
+  cursor: not-allowed;
+}
+
+.calendar-footer {
+  display: flex;
+  justify-content: center;
+}
+
+.continue-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 50px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  border: none;
+  border-radius: 18px;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.continue-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.continue-btn:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.continue-btn:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(99, 102, 241, 0.4);
+}
+
+.continue-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.continue-btn svg {
+  width: 22px;
+  height: 22px;
+  fill: white;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  .calendar-container {
+    padding: 15px;
+    min-height: calc(100vh - 56px);
+  }
+
+  .calendar-card {
+    padding: 25px 20px;
+    border-radius: 24px;
+  }
+
+  .calendar-title {
+    font-size: 22px;
+  }
+
+  .day {
+    font-size: 14px;
+  }
+
+  .continue-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 16px 30px;
+  }
+}

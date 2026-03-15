@@ -1,0 +1,125 @@
+<!-- Calendar Step -->
+@if (step() === 'calendar') {
+  <div class="back-link standalone" (click)="goBack()">
+    <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+    Back to Dashboard
+  </div>
+  <app-calendar (dateSelected)="onDateSelected($event)"></app-calendar>
+}
+
+<!-- Tasks Step -->
+@if (step() === 'tasks') {
+<div class="tasks-content">
+  <div class="tasks-header">
+    <div class="back-link" (click)="goBack()">
+      <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+      Back to Calendar
+    </div>
+    <div class="selected-date-badge">
+      <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8 4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg>
+      {{ formattedDate() }}
+    </div>
+    <h1 class="tasks-title">Daily Tasks</h1>
+    <p class="tasks-subtitle">Track your daily health activities</p>
+  </div>
+
+  <div class="tasks-legend">
+    <div class="legend-item">
+      <span class="legend-dot complete"></span>
+      <span>Complete</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-dot partial"></span>
+      <span>Partial</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-dot none"></span>
+      <span>None</span>
+    </div>
+  </div>
+
+  <div class="tasks-form">
+    @for (category of categories; track category) {
+      <div class="task-category">
+        <h3 class="category-title">{{ category }}</h3>
+        <div class="task-list">
+          @for (task of getTasksByCategory(category); track task.id) {
+            <div class="task-item">
+              <div class="task-info">
+                <div class="task-icon" [attr.data-icon]="task.icon">
+                  @switch (task.icon) {
+                    @case ('pill') {
+                      <svg viewBox="0 0 24 24"><path d="M4.22 11.29l6.07-6.07a5.5 5.5 0 017.78 7.78l-6.07 6.07a5.5 5.5 0 01-7.78-7.78zm7.78 1.41L14.12 10.58 10.58 7.05 8.46 9.17l3.54 3.53z"/></svg>
+                    }
+                    @case ('exercise') {
+                      <svg viewBox="0 0 24 24"><path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z"/></svg>
+                    }
+                    @case ('meditation') {
+                      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                    }
+                    @case ('water') {
+                      <svg viewBox="0 0 24 24"><path d="M12 2c-5.33 4.55-8 8.48-8 11.8 0 4.98 3.8 8.2 8 8.2s8-3.22 8-8.2c0-3.32-2.67-7.25-8-11.8z"/></svg>
+                    }
+                    @case ('diet') {
+                      <svg viewBox="0 0 24 24"><path d="M18.06 22.99h1.66c.84 0 1.53-.64 1.63-1.46L23 5.05l-5 2V1h-2v8l-5-2L12.77 21.5c.1.82.79 1.46 1.63 1.46h1.66c.38 0 .75-.14 1.03-.38.27.24.65.38 1.03.38zM1 21.99h5V10H1v11.99z"/></svg>
+                    }
+                    @case ('sleep') {
+                      <svg viewBox="0 0 24 24"><path d="M9 2c-1.05 0-2.05.16-3 .46 4.06 1.27 7 5.06 7 9.54 0 4.48-2.94 8.27-7 9.54.95.3 1.95.46 3 .46 5.52 0 10-4.48 10-10S14.52 2 9 2z"/></svg>
+                    }
+                    @case ('walk') {
+                      <svg viewBox="0 0 24 24"><path d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3C14.8 12 16.8 13 19 13v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1L6 8.3V13h2V9.6l1.8-.7z"/></svg>
+                    }
+                  }
+                </div>
+                <span class="task-name">{{ task.name }}</span>
+              </div>
+              <div class="task-options">
+                <label class="radio-option complete" [class.selected]="task.status === 'complete'">
+                  <input type="radio" [name]="task.id" [checked]="task.status === 'complete'" (change)="setTaskStatus(task.id, 'complete')">
+                  <span class="radio-circle"></span>
+                  <span class="radio-label">Complete</span>
+                </label>
+                <label class="radio-option partial" [class.selected]="task.status === 'partial'">
+                  <input type="radio" [name]="task.id" [checked]="task.status === 'partial'" (change)="setTaskStatus(task.id, 'partial')">
+                  <span class="radio-circle"></span>
+                  <span class="radio-label">Partial</span>
+                </label>
+                <label class="radio-option none" [class.selected]="task.status === 'none'">
+                  <input type="radio" [name]="task.id" [checked]="task.status === 'none'" (change)="setTaskStatus(task.id, 'none')">
+                  <span class="radio-circle"></span>
+                  <span class="radio-label">None</span>
+                </label>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <div class="submit-section">
+      <button type="button" class="submit-btn" (click)="onSubmit()">
+        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+        Submit Tasks
+      </button>
+    </div>
+  </div>
+</div>
+}
+
+<!-- Success Modal -->
+@if (showModal()) {
+  <div class="modal-overlay active" (click)="onModalOverlayClick($event)">
+    <div class="modal">
+      <div class="success-animation">
+        <div class="success-circle">
+          <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+        </div>
+      </div>
+      <h3 class="modal-title">Tasks Recorded! 🎉</h3>
+      <p class="modal-message">Your daily activities have been saved successfully. Keep up the great work on your health journey!</p>
+      <button class="modal-btn" (click)="closeModal()">
+        Back to Dashboard
+      </button>
+    </div>
+  </div>
+}
