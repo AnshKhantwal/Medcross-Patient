@@ -2,6 +2,7 @@ import { Component, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CalendarComponent } from '../calendar/calendar';
+import { SubmissionHistoryService } from '../../services/submission-history.service';
 
 export type TaskStatus = 'complete' | 'partial' | 'none' | null;
 
@@ -43,7 +44,10 @@ export class TasksComponent {
     { id: 'yoga_meditation', name: 'Yoga Meditation', category: 'Wellness', icon: 'meditation', status: null },
   ];
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private submissionHistoryService: SubmissionHistoryService
+  ) {}
 
   onDateSelected(date: Date): void {
     this.selectedDate.set(date);
@@ -67,7 +71,12 @@ export class TasksComponent {
   }
 
   onSubmit(): void {
-    console.log('Tasks submitted:', { date: this.selectedDate(), tasks: this.tasks });
+    const selectedDate = this.selectedDate();
+    if (selectedDate) {
+      this.submissionHistoryService.saveTasks(selectedDate, this.tasks);
+    }
+
+    console.log('Tasks submitted:', { date: selectedDate, tasks: this.tasks });
     this.showModal.set(true);
   }
 

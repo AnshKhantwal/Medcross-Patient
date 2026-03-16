@@ -353,6 +353,24 @@
 }
 
 @media (max-width: 576px) {
+  .selected-date-badge {
+    gap: 8px;
+    background: white;
+    color: var(--gray-700);
+    border: 1px solid var(--gray-200);
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 13px;
+    margin-bottom: 14px;
+    box-shadow: none;
+  }
+
+  .selected-date-badge svg {
+    width: 18px;
+    height: 18px;
+    fill: var(--primary);
+  }
+
   .vitals-title {
     font-size: 22px;
   }

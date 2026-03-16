@@ -2,6 +2,7 @@ import { Component, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CalendarComponent } from '../calendar/calendar';
+import { SubmissionHistoryService } from '../../services/submission-history.service';
 
 export interface VitalData {
   heightFeet: number | null;
@@ -49,7 +50,10 @@ export class VitalsComponent {
     spo2: null
   };
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private submissionHistoryService: SubmissionHistoryService
+  ) {}
 
   onDateSelected(date: Date): void {
     this.selectedDate.set(date);
@@ -65,7 +69,12 @@ export class VitalsComponent {
   }
 
   onSubmit(): void {
-    console.log('Vitals submitted:', { date: this.selectedDate(), vitals: this.vitals });
+    const selectedDate = this.selectedDate();
+    if (selectedDate) {
+      this.submissionHistoryService.saveVitals(selectedDate, this.vitals);
+    }
+
+    console.log('Vitals submitted:', { date: selectedDate, vitals: this.vitals });
     this.showModal.set(true);
   }
 

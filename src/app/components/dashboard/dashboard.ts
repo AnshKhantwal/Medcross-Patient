@@ -39,4 +39,9 @@ export class DashboardComponent {
     this.closeFab();
     this.router.navigate(['/tasks']);
   }
+
+  goToHistory(): void {
+    this.closeFab();
+    this.router.navigate(['/history']);
+  }
 }
