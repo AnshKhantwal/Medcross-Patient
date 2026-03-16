@@ -36,16 +36,11 @@ export class TasksComponent {
   });
 
   tasks: Task[] = [
-    { id: 'medicine_morning', name: 'Morning Medicine', category: 'Medicine', icon: 'pill', status: null },
-    { id: 'medicine_afternoon', name: 'Afternoon Medicine', category: 'Medicine', icon: 'pill', status: null },
-    { id: 'medicine_evening', name: 'Evening Medicine', category: 'Medicine', icon: 'pill', status: null },
-    { id: 'medicine_night', name: 'Night Medicine', category: 'Medicine', icon: 'pill', status: null },
-    { id: 'exercise', name: 'Exercise / Physical Activity', category: 'Wellness', icon: 'exercise', status: null },
-    { id: 'meditation', name: 'Meditation / Relaxation', category: 'Wellness', icon: 'meditation', status: null },
-    { id: 'water_intake', name: 'Water Intake (8 glasses)', category: 'Nutrition', icon: 'water', status: null },
-    { id: 'healthy_diet', name: 'Healthy Diet', category: 'Nutrition', icon: 'diet', status: null },
-    { id: 'sleep', name: 'Adequate Sleep (7-8 hrs)', category: 'Rest', icon: 'sleep', status: null },
-    { id: 'walk', name: 'Walking (30 mins)', category: 'Wellness', icon: 'walk', status: null },
+    { id: 'medicine', name: 'Medicine', category: 'Health', icon: 'pill', status: null },
+    { id: 'diet', name: 'Diet', category: 'Nutrition', icon: 'diet', status: null },
+    { id: 'exercise', name: 'Exercise', category: 'Wellness', icon: 'exercise', status: null },
+    { id: 'chota_recharge', name: 'Chota Recharge', category: 'Recharge', icon: 'water', status: null },
+    { id: 'yoga_meditation', name: 'Yoga Meditation', category: 'Wellness', icon: 'meditation', status: null },
   ];
 
   constructor(private router: Router) {}
