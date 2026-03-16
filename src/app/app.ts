@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs';
+
 
 @Component({
   selector: 'app-root',
@@ -7,5 +9,11 @@ import { RouterOutlet } from '@angular/router';
   template: '<router-outlet></router-outlet>',
   styles: []
 })
-export class App {}
+export class App {
+  constructor(router: Router) {
+    router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+}
 

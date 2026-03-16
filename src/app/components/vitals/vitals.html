@@ -25,28 +25,6 @@
 
   <form class="vitals-form" (ngSubmit)="onSubmit()">
     <div class="vitals-grid">
-      <!-- Height -->
-      <div class="vital-field">
-        <div class="vital-label">
-          <div class="vital-label-icon">
-            <svg viewBox="0 0 24 24"><path d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
-          </div>
-          <span class="vital-label-text">Height</span>
-        </div>
-        <div class="vital-inputs">
-          <div class="vital-input-group">
-            <input type="number" class="vital-input" placeholder="5" min="0" max="8" 
-                   [(ngModel)]="vitals.heightFeet" name="heightFeet">
-          </div>
-          <span class="vital-unit">ft</span>
-          <div class="vital-input-group">
-            <input type="number" class="vital-input" placeholder="8" min="0" max="11"
-                   [(ngModel)]="vitals.heightInches" name="heightInches">
-          </div>
-          <span class="vital-unit">in</span>
-        </div>
-      </div>
-
       <!-- Weight -->
       <div class="vital-field">
         <div class="vital-label">
@@ -103,23 +81,6 @@
         </div>
       </div>
 
-      <!-- Respiratory Rate -->
-      <div class="vital-field">
-        <div class="vital-label">
-          <div class="vital-label-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-          </div>
-          <span class="vital-label-text">Respiratory Rate</span>
-        </div>
-        <div class="vital-inputs">
-          <div class="vital-input-group">
-            <input type="number" class="vital-input" placeholder="16" min="8" max="40"
-                   [(ngModel)]="vitals.respiratoryRate" name="respiratoryRate">
-          </div>
-          <span class="vital-unit">/Min</span>
-        </div>
-      </div>
-
       <!-- Pulse -->
       <div class="vital-field">
         <div class="vital-label">
@@ -132,6 +93,23 @@
           <div class="vital-input-group">
             <input type="number" class="vital-input" placeholder="72" min="40" max="200"
                    [(ngModel)]="vitals.pulse" name="pulse">
+          </div>
+          <span class="vital-unit">/Min</span>
+        </div>
+      </div>
+
+      <!-- Respiratory Rate -->
+      <div class="vital-field">
+        <div class="vital-label">
+          <div class="vital-label-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          </div>
+          <span class="vital-label-text">Respiratory Rate</span>
+        </div>
+        <div class="vital-inputs">
+          <div class="vital-input-group">
+            <input type="number" class="vital-input" placeholder="16" min="8" max="40"
+                   [(ngModel)]="vitals.respiratoryRate" name="respiratoryRate">
           </div>
           <span class="vital-unit">/Min</span>
         </div>
@@ -151,6 +129,28 @@
                    [(ngModel)]="vitals.spo2" name="spo2">
           </div>
           <span class="vital-unit">%</span>
+        </div>
+      </div>
+
+      <!-- Height -->
+      <div class="vital-field">
+        <div class="vital-label">
+          <div class="vital-label-icon">
+            <svg viewBox="0 0 24 24"><path d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+          </div>
+          <span class="vital-label-text">Height</span>
+        </div>
+        <div class="vital-inputs">
+          <div class="vital-input-group">
+            <input type="number" class="vital-input" placeholder="5" min="0" max="8" 
+                   [(ngModel)]="vitals.heightFeet" name="heightFeet">
+          </div>
+          <span class="vital-unit">ft</span>
+          <div class="vital-input-group">
+            <input type="number" class="vital-input" placeholder="8" min="0" max="11"
+                   [(ngModel)]="vitals.heightInches" name="heightInches">
+          </div>
+          <span class="vital-unit">in</span>
         </div>
       </div>
     </div>
