@@ -20,6 +20,10 @@ export interface HistoryRecord {
   tasks: TasksSubmission | null;
 }
 
+export interface HistoryTimelineItem extends HistoryRecord {
+  lastSubmittedAt: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -63,6 +67,49 @@ export class SubmissionHistoryService {
       vitals: vitalsHistory[normalizedDate] ?? null,
       tasks: tasksHistory[normalizedDate] ?? null
     };
+  }
+
+  getAllHistory(): HistoryTimelineItem[] {
+    const vitalsHistory = this.readMap<VitalsSubmission>(this.vitalsStorageKey);
+    const tasksHistory = this.readMap<TasksSubmission>(this.tasksStorageKey);
+
+    const allDates = new Set<string>([
+      ...Object.keys(vitalsHistory),
+      ...Object.keys(tasksHistory)
+    ]);
+
+    return Array.from(allDates)
+      .map((date) => {
+        const vitals = vitalsHistory[date] ?? null;
+        const tasks = tasksHistory[date] ?? null;
+        const lastSubmittedAt = this.resolveLastSubmittedAt(vitals?.submittedAt, tasks?.submittedAt);
+
+        return {
+          date,
+          vitals,
+          tasks,
+          lastSubmittedAt
+        };
+      })
+      .sort((a, b) => new Date(b.lastSubmittedAt).getTime() - new Date(a.lastSubmittedAt).getTime());
+  }
+
+  private resolveLastSubmittedAt(vitalsSubmittedAt?: string, tasksSubmittedAt?: string): string {
+    if (!vitalsSubmittedAt && !tasksSubmittedAt) {
+      return new Date(0).toISOString();
+    }
+
+    if (!vitalsSubmittedAt) {
+      return tasksSubmittedAt!;
+    }
+
+    if (!tasksSubmittedAt) {
+      return vitalsSubmittedAt;
+    }
+
+    return new Date(vitalsSubmittedAt).getTime() >= new Date(tasksSubmittedAt).getTime()
+      ? vitalsSubmittedAt
+      : tasksSubmittedAt;
   }
 
   private normalizeDate(date: Date): string {

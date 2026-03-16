@@ -1,65 +1,186 @@
-<!-- Calendar Step -->
-@if (step() === 'calendar') {
-  <div class="back-link standalone" (click)="goBack()">
-    <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
-    Back to Dashboard
-  </div>
-  <app-calendar (dateSelected)="onDateSelected($event)"></app-calendar>
-}
-
-<!-- History Step -->
-@if (step() === 'history') {
-  <div class="history-content">
+<div class="history-content">
+  @if (step() === 'dates') {
     <div class="history-header">
       <div class="back-link" (click)="goBack()">
         <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
-        Back to Calendar
-      </div>
-      <div class="selected-date-badge">
-        <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8 4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg>
-        {{ formattedDate() }}
+        Back to Dashboard
       </div>
       <h1 class="history-title">Submission History</h1>
-      <p class="history-subtitle">View your past vitals and task submissions for the selected date</p>
+      <p class="history-subtitle">Filter or search dates, then open details.</p>
     </div>
 
-    <div class="history-grid">
-      <section class="history-card" aria-label="Vitals submissions">
-        <h2>Vitals</h2>
+    @if (historyItems().length > 0) {
+      <section class="section-block">
+        <div class="history-tools" aria-label="History filters">
+          <div class="filter-tabs" role="tablist" aria-label="Submission type filter">
+            <button
+              type="button"
+              class="filter-tab"
+              [class.active]="filterMode() === 'all'"
+              (click)="setFilterMode('all')">
+              All
+            </button>
+            <button
+              type="button"
+              class="filter-tab"
+              [class.active]="filterMode() === 'vitals'"
+              (click)="setFilterMode('vitals')">
+              Vitals
+            </button>
+            <button
+              type="button"
+              class="filter-tab"
+              [class.active]="filterMode() === 'tasks'"
+              (click)="setFilterMode('tasks')">
+              Tasks
+            </button>
+          </div>
 
-        @if (vitalsData()) {
-          <ul class="details-list">
-            <li><span>Height</span><strong>{{ vitalsData()!.heightFeet ?? '--' }} ft {{ vitalsData()!.heightInches ?? '--' }} in</strong></li>
-            <li><span>Weight</span><strong>{{ vitalsData()!.weight ?? '--' }} Kg</strong></li>
-            <li><span>Temperature</span><strong>{{ vitalsData()!.temperature ?? '--' }} °F</strong></li>
-            <li><span>Blood Pressure</span><strong>{{ vitalsData()!.bpSystolic ?? '--' }} / {{ vitalsData()!.bpDiastolic ?? '--' }} mmHg</strong></li>
-            <li><span>Respiratory Rate</span><strong>{{ vitalsData()!.respiratoryRate ?? '--' }} /Min</strong></li>
-            <li><span>Pulse</span><strong>{{ vitalsData()!.pulse ?? '--' }} /Min</strong></li>
-            <li><span>SPO2</span><strong>{{ vitalsData()!.spo2 ?? '--' }} %</strong></li>
-          </ul>
-        } @else {
-          <p class="empty-state">No vitals were submitted for this date.</p>
+          <label class="search-box" aria-label="Search dates">
+            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.5 6.5 0 1016 15.5l.27.28v.79L21 21.49 22.49 20 15.5 14zM6.5 11a4.5 4.5 0 114.5 4.5A4.5 4.5 0 016.5 11z"/></svg>
+            <input
+              type="text"
+              placeholder="Search date (e.g. Mar, 2026, Monday)"
+              [value]="searchQuery()"
+              (input)="onSearch($event)">
+          </label>
+        </div>
+
+        <h2 class="section-title">Available Dates</h2>
+        <div class="date-cards" role="list" aria-label="Submission dates">
+          @for (item of filteredHistoryItems(); track item.date) {
+            <button
+              type="button"
+              class="date-card"
+              (click)="selectDate(item.date)">
+              <span class="date-main">{{ formatDisplayDate(item.date) }}</span>
+              <span class="date-meta">Last submitted: {{ formatSubmittedAt(item.lastSubmittedAt) }}</span>
+              <span class="date-tags">
+                <span class="date-tag" [class.available]="!!item.vitals">Vitals</span>
+                <span class="date-tag" [class.available]="!!item.tasks">Tasks</span>
+              </span>
+            </button>
+          }
+        </div>
+
+        @if (filteredHistoryItems().length === 0) {
+          <p class="empty-state filter-empty">No dates match your current filter/search.</p>
         }
       </section>
+    } @else {
+      <section class="history-card empty-container" aria-label="No history available">
+        <h3>No history yet</h3>
+        <p class="empty-state">Submit your vitals or tasks and your date cards will appear here.</p>
+      </section>
+    }
+  }
 
-      <section class="history-card" aria-label="Task submissions">
-        <h2>Tasks</h2>
+  @if (step() === 'details' && selectedRecord()) {
+    <div class="history-header">
+      <div class="back-link" (click)="backToDates()">
+        <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        Back to Dates
+      </div>
+      <h1 class="history-title">Reading Details</h1>
+      <p class="history-subtitle">Showing submitted details for the selected date.</p>
+    </div>
 
-        @if (tasksData().length > 0) {
-          <ul class="task-list">
-            @for (task of tasksData(); track task.id) {
-              <li>
-                <span>{{ task.name }}</span>
-                <strong class="task-status" [class]="'task-status ' + statusClass(task.status)">
-                  {{ formatTaskStatus(task.status) }}
-                </strong>
-              </li>
+    <section class="section-block">
+      <div class="record-shell latest">
+        <div class="selected-date-badge">
+          <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8 4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg>
+          {{ formatDisplayDate(selectedRecord()!.date) }}
+        </div>
+
+        <div class="details-summary">
+          <div class="summary-chip">
+            <span class="chip-label">Last Updated</span>
+            <strong>{{ selectedSubmittedAt() }}</strong>
+          </div>
+          <div class="summary-chip">
+            <span class="chip-label">Vitals</span>
+            <strong>{{ selectedRecord()!.vitals ? 'Available' : 'Not Submitted' }}</strong>
+          </div>
+          <div class="summary-chip">
+            <span class="chip-label">Tasks</span>
+            <strong>{{ selectedTaskCounts().total }} Item(s)</strong>
+          </div>
+        </div>
+
+        <div class="history-grid">
+          <section class="history-card" aria-label="Selected vitals submission">
+            <h3 class="card-title">
+              <span class="title-icon">🩺</span>
+              Vitals
+            </h3>
+
+            @if (selectedRecord()!.vitals) {
+              <ul class="metrics-grid">
+                <li class="metric-item">
+                  <span>Height</span>
+                  <strong>{{ selectedRecord()!.vitals!.vitals.heightFeet ?? '--' }} ft {{ selectedRecord()!.vitals!.vitals.heightInches ?? '--' }} in</strong>
+                </li>
+                <li class="metric-item">
+                  <span>Weight</span>
+                  <strong>{{ selectedRecord()!.vitals!.vitals.weight ?? '--' }} Kg</strong>
+                </li>
+                <li class="metric-item">
+                  <span>Temperature</span>
+                  <strong>{{ selectedRecord()!.vitals!.vitals.temperature ?? '--' }} °F</strong>
+                </li>
+                <li class="metric-item">
+                  <span>Blood Pressure</span>
+                  <strong>{{ selectedRecord()!.vitals!.vitals.bpSystolic ?? '--' }} / {{ selectedRecord()!.vitals!.vitals.bpDiastolic ?? '--' }} mmHg</strong>
+                </li>
+                <li class="metric-item">
+                  <span>Pulse</span>
+                  <strong>{{ selectedRecord()!.vitals!.vitals.pulse ?? '--' }} /Min</strong>
+                </li>
+                <li class="metric-item">
+                  <span>Respiratory Rate</span>
+                  <strong>{{ selectedRecord()!.vitals!.vitals.respiratoryRate ?? '--' }} /Min</strong>
+                </li>
+                <li class="metric-item">
+                  <span>SPO2</span>
+                  <strong>{{ selectedRecord()!.vitals!.vitals.spo2 ?? '--' }} %</strong>
+                </li>
+              </ul>
+            } @else {
+              <p class="empty-state">No vitals were submitted for this date.</p>
             }
-          </ul>
-        } @else {
-          <p class="empty-state">No tasks were submitted for this date.</p>
-        }
-      </section>
-    </div>
-  </div>
-}
+          </section>
+
+          <section class="history-card" aria-label="Selected task submission">
+            <h3 class="card-title">
+              <span class="title-icon">✅</span>
+              Tasks
+            </h3>
+
+            @if (selectedTaskCounts().total > 0) {
+              <div class="task-summary-row">
+                <span class="mini-pill complete">Complete {{ selectedTaskCounts().complete }}</span>
+                <span class="mini-pill partial">Partial {{ selectedTaskCounts().partial }}</span>
+                <span class="mini-pill none">None {{ selectedTaskCounts().none }}</span>
+              </div>
+            }
+
+            @if (selectedRecord()!.tasks?.tasks?.length) {
+              <ul class="task-list">
+                @for (task of selectedRecord()!.tasks!.tasks; track task.id) {
+                  <li>
+                    <span>{{ task.name }}</span>
+                    <strong class="task-status" [class]="'task-status ' + statusClass(task.status)">
+                      {{ formatTaskStatus(task.status) }}
+                    </strong>
+                  </li>
+                }
+              </ul>
+            } @else {
+              <p class="empty-state">No tasks were submitted for this date.</p>
+            }
+          </section>
+        </div>
+      </div>
+    </section>
+  }
+</div>
