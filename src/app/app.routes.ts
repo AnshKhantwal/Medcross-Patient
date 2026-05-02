@@ -31,6 +31,14 @@ export const routes: Routes = [
       {
         path: 'history',
         loadComponent: () => import('./components/history/history').then(m => m.HistoryComponent)
+      },
+      {
+        path: 'profile',
+        loadComponent: () => import('./components/profile/profile').then(m => m.ProfileComponent)
+      },
+      {
+        path: 'change-password',
+        loadComponent: () => import('./components/change-password/change-password').then(m => m.ChangePasswordComponent)
       }
     ]
   },

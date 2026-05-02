@@ -9,12 +9,16 @@
         <span class="sidebar-brand-text">MedCross</span>
       </div>
       <div class="user-profile">
-        <div class="user-avatar">
+        <button class="user-avatar profile-menu-btn" (click)="toggleProfileMenu($event)" aria-label="Open profile menu">
           <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-        </div>
+        </button>
         <div class="user-info">
           <div class="user-name">{{ patient()?.name || 'Patient' }}</div>
           <div class="user-id">ID: {{ patient()?.number || '---' }}</div>
+        </div>
+        <div class="profile-menu" *ngIf="profileMenuOpen()">
+          <button class="profile-menu-item" (click)="goToProfile()">Profile</button>
+          <button class="profile-menu-item" (click)="changePassword()">Change Password</button>
         </div>
       </div>
     </div>
@@ -57,12 +61,17 @@
         <span></span>
       </div>
       <span class="mobile-title">MedCross</span>
-      <div class="mobile-avatar">
+      <button class="mobile-avatar profile-menu-btn" (click)="toggleProfileMenu($event)" aria-label="Open profile menu">
         <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+      </button>
+      <div class="profile-menu mobile" *ngIf="profileMenuOpen()">
+        <button class="profile-menu-item" (click)="goToProfile()">Profile</button>
+        <button class="profile-menu-item" (click)="changePassword()">Change Password</button>
       </div>
     </div>
 
     <!-- Router Outlet for nested content -->
     <router-outlet></router-outlet>
+    <app-toast></app-toast>
   </main>
 </div>

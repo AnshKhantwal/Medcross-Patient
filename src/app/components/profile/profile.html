@@ -1,0 +1,30 @@
+<div class="profile-back-row-flat">
+  <button class="back-btn-flat" type="button" (click)="goBack()" aria-label="Back to Dashboard">← Back to Dashboard</button>
+</div>
+<div class="profile-card">
+  <h2 class="profile-title">Profile</h2>
+  <form [formGroup]="form" (ngSubmit)="saveProfile()" class="profile-form">
+    <div class="form-group modern">
+      <div class="input-wrapper">
+        <input id="name" formControlName="name" type="text" required />
+        <label for="name">Name</label>
+      </div>
+      <div class="error" *ngIf="form.controls.name.invalid && form.controls.name.touched">Name is required.</div>
+    </div>
+    <div class="form-group modern">
+      <div class="input-wrapper">
+        <input id="email" formControlName="email" type="email" required />
+        <label for="email">Email</label>
+      </div>
+      <div class="error" *ngIf="form.controls.email.invalid && form.controls.email.touched">Valid email required.</div>
+    </div>
+    <div class="form-group modern">
+      <div class="input-wrapper">
+        <input id="phone" formControlName="phone" type="tel" required />
+        <label for="phone">Phone</label>
+      </div>
+      <div class="error" *ngIf="form.controls.phone.invalid && form.controls.phone.touched">Phone is required.</div>
+    </div>
+    <button type="submit" class="save-btn" [disabled]!="isDirty() || !isValid()">Save Changes</button>
+  </form>
+</div>

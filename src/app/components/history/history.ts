@@ -38,7 +38,19 @@ export class HistoryComponent {
       }
 
       const displayDate = this.formatDisplayDate(item.date).toLowerCase();
-      return item.date.includes(query) || displayDate.includes(query);
+      const numericDate = new Date(`${item.date}T00:00:00`).toLocaleDateString('en-US');
+      const longDate = new Date(`${item.date}T00:00:00`).toLocaleDateString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric'
+      }).toLowerCase();
+
+      return (
+        item.date.includes(query) ||
+        displayDate.includes(query) ||
+        numericDate.toLowerCase().includes(query) ||
+        longDate.includes(query)
+      );
     });
   });
 

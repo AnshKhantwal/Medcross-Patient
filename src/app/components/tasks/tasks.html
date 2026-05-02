@@ -38,6 +38,29 @@
     </div>
   </div>
 
+  <div class="tasks-progress-card">
+    <div class="progress-head">
+      <div>
+        <h3>Daily Progress</h3>
+        <p>{{ getAnsweredCount() }} of {{ tasks.length }} tasks marked</p>
+      </div>
+      <strong>{{ getCompletionPercent() }}%</strong>
+    </div>
+    <div class="progress-track" role="progressbar" [attr.aria-valuenow]="getCompletionPercent()" aria-valuemin="0" aria-valuemax="100">
+      <span class="progress-fill" [style.width.%]="getCompletionPercent()"></span>
+    </div>
+    <div class="status-chips">
+      <span class="status-chip complete">Complete: {{ getStatusCount('complete') }}</span>
+      <span class="status-chip partial">Partial: {{ getStatusCount('partial') }}</span>
+      <span class="status-chip none">None: {{ getStatusCount('none') }}</span>
+    </div>
+    <div class="quick-actions">
+      <button type="button" class="quick-btn complete" (click)="setAllTasksStatus('complete')">Mark All Complete</button>
+      <button type="button" class="quick-btn partial" (click)="setAllTasksStatus('partial')">Mark All Partial</button>
+      <button type="button" class="quick-btn clear" (click)="clearAllStatuses()">Clear All</button>
+    </div>
+  </div>
+
   <div class="tasks-form">
     @for (category of categories; track category) {
       <div class="task-category">
@@ -71,7 +94,10 @@
                     }
                   }
                 </div>
-                <span class="task-name">{{ task.name }}</span>
+                <div class="task-copy">
+                  <span class="task-name">{{ task.name }}</span>
+                  <span class="task-status-text">{{ getTaskStatusLabel(task) }}</span>
+                </div>
               </div>
               <div class="task-options">
                 <label class="radio-option complete" [class.selected]="task.status === 'complete'">
@@ -97,10 +123,13 @@
     }
 
     <div class="submit-section">
-      <button type="button" class="submit-btn" (click)="onSubmit()">
+      <button type="button" class="submit-btn" [disabled]="!canSubmit()" (click)="onSubmit()">
         <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
         Submit Tasks
       </button>
+      @if (!canSubmit()) {
+        <p class="submit-hint">Mark at least one task to submit.</p>
+      }
     </div>
   </div>
 </div>

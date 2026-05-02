@@ -40,7 +40,7 @@
             <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.5 6.5 0 1016 15.5l.27.28v.79L21 21.49 22.49 20 15.5 14zM6.5 11a4.5 4.5 0 114.5 4.5A4.5 4.5 0 016.5 11z"/></svg>
             <input
               type="text"
-              placeholder="Search date (e.g. Mar, 2026, Monday)"
+              placeholder="Search full date (e.g. Month Date, Year)"
               [value]="searchQuery()"
               (input)="onSearch($event)">
           </label>
@@ -56,8 +56,12 @@
               <span class="date-main">{{ formatDisplayDate(item.date) }}</span>
               <span class="date-meta">Last submitted: {{ formatSubmittedAt(item.lastSubmittedAt) }}</span>
               <span class="date-tags">
-                <span class="date-tag" [class.available]="!!item.vitals">Vitals</span>
-                <span class="date-tag" [class.available]="!!item.tasks">Tasks</span>
+                @if (item.vitals) {
+                  <span class="date-tag available">Vitals</span>
+                }
+                @if (item.tasks) {
+                  <span class="date-tag available">Tasks</span>
+                }
               </span>
             </button>
           }

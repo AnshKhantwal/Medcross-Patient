@@ -70,6 +70,38 @@ export class TasksComponent {
     }
   }
 
+  setAllTasksStatus(status: Exclude<TaskStatus, null>): void {
+    this.tasks.forEach(task => {
+      task.status = status;
+    });
+  }
+
+  clearAllStatuses(): void {
+    this.tasks.forEach(task => {
+      task.status = null;
+    });
+  }
+
+  getStatusCount(status: Exclude<TaskStatus, null>): number {
+    return this.tasks.filter(task => task.status === status).length;
+  }
+
+  getAnsweredCount(): number {
+    return this.tasks.filter(task => task.status !== null).length;
+  }
+
+  getCompletionPercent(): number {
+    if (this.tasks.length === 0) {
+      return 0;
+    }
+
+    return Math.round((this.getAnsweredCount() / this.tasks.length) * 100);
+  }
+
+  canSubmit(): boolean {
+    return this.getAnsweredCount() > 0;
+  }
+
   onSubmit(): void {
     const selectedDate = this.selectedDate();
     if (selectedDate) {
@@ -104,5 +136,21 @@ export class TasksComponent {
 
   get categories(): string[] {
     return [...new Set(this.tasks.map(t => t.category))];
+  }
+
+  getTaskStatusLabel(task: Task): string {
+    if (!task.status) {
+      return 'Not marked';
+    }
+
+    if (task.status === 'complete') {
+      return 'Complete';
+    }
+
+    if (task.status === 'partial') {
+      return 'Partial';
+    }
+
+    return 'None';
   }
 }
