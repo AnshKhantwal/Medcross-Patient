@@ -1,8 +1,8 @@
 <!-- Calendar Step -->
 @if (step() === 'calendar') {
-  <div class="back-link standalone" (click)="goBack()">
+  <div class="back-link standalone" (click)="closeCalendar()">
     <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
-    Back to Dashboard
+    Back
   </div>
   <app-calendar (dateSelected)="onDateSelected($event)"></app-calendar>
 }
@@ -11,13 +11,21 @@
 @if (step() === 'tasks') {
 <div class="tasks-content">
   <div class="tasks-header">
-    <div class="back-link" (click)="goBack()">
-      <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
-      Back to Calendar
-    </div>
-    <div class="selected-date-badge">
-      <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8 4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg>
-      {{ formattedDate() }}
+    <div class="tasks-top-row">
+      <div class="back-link" (click)="goBack()">
+        <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        <span>Back</span>
+      </div>
+      <div class="selected-date-badge">
+        <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8 4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg>
+        {{ formattedDate() }}
+        <button type="button" class="edit-date-btn" title="Change date" (click)="showCalendar()">
+          <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+            <path d="M3 17.25V21h3.75L17.81 10.19a1 1 0 0 0 0-1.41l-2.5-2.5a1 1 0 0 0-1.41 0L4.34 17.25" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
+            <path d="M14.25 6.5l3.25 3.25" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
+          </svg>
+        </button>
+      </div>
     </div>
     <h1 class="tasks-title">Daily Tasks</h1>
     <p class="tasks-subtitle">Track your daily health activities</p>
@@ -99,22 +107,19 @@
                   <span class="task-status-text">{{ getTaskStatusLabel(task) }}</span>
                 </div>
               </div>
-              <div class="task-options">
-                <label class="radio-option complete" [class.selected]="task.status === 'complete'">
-                  <input type="radio" [name]="task.id" [checked]="task.status === 'complete'" (change)="setTaskStatus(task.id, 'complete')">
+              <div class="task-options" role="group" [attr.aria-label]="task.name + ' status'">
+                <button type="button" class="radio-option complete" [class.selected]="task.status === 'complete'" [attr.aria-pressed]="task.status === 'complete'" (click)="setTaskStatus(task.id, 'complete')">
                   <span class="radio-circle"></span>
                   <span class="radio-label">Complete</span>
-                </label>
-                <label class="radio-option partial" [class.selected]="task.status === 'partial'">
-                  <input type="radio" [name]="task.id" [checked]="task.status === 'partial'" (change)="setTaskStatus(task.id, 'partial')">
+                </button>
+                <button type="button" class="radio-option partial" [class.selected]="task.status === 'partial'" [attr.aria-pressed]="task.status === 'partial'" (click)="setTaskStatus(task.id, 'partial')">
                   <span class="radio-circle"></span>
                   <span class="radio-label">Partial</span>
-                </label>
-                <label class="radio-option none" [class.selected]="task.status === 'none'">
-                  <input type="radio" [name]="task.id" [checked]="task.status === 'none'" (change)="setTaskStatus(task.id, 'none')">
+                </button>
+                <button type="button" class="radio-option none" [class.selected]="task.status === 'none'" [attr.aria-pressed]="task.status === 'none'" (click)="setTaskStatus(task.id, 'none')">
                   <span class="radio-circle"></span>
                   <span class="radio-label">None</span>
-                </label>
+                </button>
               </div>
             </div>
           }

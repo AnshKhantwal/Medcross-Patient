@@ -207,22 +207,74 @@
 /* Responsive */
 @media (max-width: 576px) {
   .calendar-container {
-    padding: 0;
+    padding: 0 0 8px;
     min-height: unset;
+    background: transparent;
   }
+
   .calendar-card {
-    padding: 8px 2px 8px 2px;
+    padding: 10px 8px 8px;
+    border-radius: 20px;
+    box-shadow: none;
+    border: 1px solid var(--gray-100);
+  }
+
+  .calendar-header {
+    margin-bottom: 8px;
+  }
+
+  .calendar-title {
+    font-size: 18px;
+  }
+
+  .calendar-subtitle {
+    font-size: 12px;
+  }
+
+  .calendar-nav {
+    margin-bottom: 8px;
+  }
+
+  .nav-btn {
+    width: 40px;
+    height: 40px;
     border-radius: 12px;
   }
-  .calendar-title {
+
+  .nav-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .current-month {
     font-size: 17px;
   }
+
+  .weekdays {
+    margin-bottom: 8px;
+  }
+
+  .weekday {
+    font-size: 11px;
+    padding: 6px 0;
+  }
+
+  .days {
+    gap: 4px;
+  }
+
   .day {
+    aspect-ratio: auto;
+    min-height: 34px;
+    border-radius: 10px;
     font-size: 13px;
   }
+
   .continue-btn {
     width: 100%;
     justify-content: center;
-    padding: 10px 0;
+    padding: 11px 0;
+    border-radius: 12px;
+    font-size: 15px;
   }
 }

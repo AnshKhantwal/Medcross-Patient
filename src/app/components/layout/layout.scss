@@ -118,9 +118,29 @@
   color: var(--gray-700);
   cursor: pointer;
   transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 .profile-menu-item:hover {
   background: var(--gray-100);
+}
+
+.profile-menu-item.logout-item {
+  color: var(--error, #ef4444);
+  border-top: 1px solid var(--gray-200);
+  margin-top: 8px;
+  padding-top: 12px;
+}
+
+.profile-menu-item.logout-item:hover {
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.profile-menu-item svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
 }
 
 @keyframes fadeIn {

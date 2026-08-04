@@ -1,22 +1,32 @@
 .tasks-content {
-  padding: 30px 40px;
-  max-width: 900px;
+  padding: 18px 20px;
+  max-width: 780px;
   margin: 0 auto;
 }
 
 .tasks-header {
-  margin-bottom: 25px;
+  margin-bottom: 12px;
+}
+
+.tasks-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  width: 100%;
+  gap: 12px;
+  margin-bottom: 4px;
 }
 
 .back-link {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   color: var(--gray-500);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  margin-bottom: 15px;
+  margin-bottom: 0;
   transition: color 0.2s ease;
 }
 
@@ -29,65 +39,93 @@
 }
 
 .back-link svg {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   fill: currentColor;
 }
 
 .selected-date-badge {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 4px;
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   color: white;
-  padding: 12px 20px;
-  border-radius: 14px;
-  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 11px;
   font-weight: 600;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+  margin-bottom: 0;
+  margin-left: auto;
+  flex-shrink: 0;
+  box-shadow: 0 1px 4px rgba(99, 102, 241, 0.2);
 }
 
 .selected-date-badge svg {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   fill: white;
 }
 
+.edit-date-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.edit-date-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  transform: translateY(-1px);
+}
+
+.edit-date-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
 .tasks-title {
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 800;
   color: var(--gray-900);
-  margin-bottom: 5px;
+  margin-bottom: 2px;
 }
 
 .tasks-subtitle {
-  font-size: 15px;
+  font-size: 13px;
   color: var(--gray-500);
+  margin: 0;
 }
 
 .tasks-legend {
   display: flex;
-  gap: 25px;
-  margin-bottom: 25px;
-  padding: 15px 20px;
+  gap: 14px;
+  margin-bottom: 12px;
+  padding: 8px 12px;
   background: white;
-  border-radius: 16px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 }
 
 .legend-item {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--gray-600);
 }
 
 .legend-dot {
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
 }
 
@@ -106,43 +144,44 @@
 .tasks-form {
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 12px;
 }
 
 .tasks-progress-card {
   background: white;
-  border-radius: 20px;
-  padding: 18px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 14px;
+  padding: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
   border: 1px solid var(--gray-100);
+  margin-bottom: 12px;
 }
 
 .progress-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 6px;
 }
 
 .progress-head h3 {
   margin: 0;
-  font-size: 17px;
+  font-size: 14px;
   color: var(--gray-900);
 }
 
 .progress-head p {
-  margin: 4px 0 0;
+  margin: 2px 0 0;
   color: var(--gray-500);
-  font-size: 13px;
+  font-size: 11px;
 }
 
 .progress-head strong {
-  font-size: 20px;
+  font-size: 16px;
   color: var(--primary);
 }
 
 .progress-track {
-  height: 10px;
+  height: 8px;
   background: var(--gray-100);
   border-radius: 999px;
   overflow: hidden;
@@ -157,17 +196,17 @@
 }
 
 .status-chips {
-  margin-top: 12px;
+  margin-top: 6px;
   display: flex;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
 }
 
 .status-chip {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   border-radius: 999px;
-  padding: 5px 10px;
+  padding: 4px 9px;
 }
 
 .status-chip.complete {
@@ -186,19 +225,19 @@
 }
 
 .quick-actions {
-  margin-top: 14px;
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
 }
 
 .quick-btn {
   border: 1px solid var(--gray-200);
   background: var(--gray-50);
   color: var(--gray-700);
-  border-radius: 10px;
-  padding: 8px 10px;
-  font-size: 12px;
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-size: 11px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -227,47 +266,48 @@
 }
 
 .task-category {
-  background: white;
-  border-radius: 24px;
-  padding: 25px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+  background: var(--gray-50);
+  border-radius: 18px;
+  padding: 16px;
+  border: 1px solid var(--gray-100);
+  box-shadow: none;
 }
 
 .category-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--gray-900);
-  margin-bottom: 20px;
-  padding-bottom: 15px;
-  border-bottom: 2px solid var(--gray-100);
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--gray-200);
 }
 
 .task-list {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 12px;
 }
 
 .task-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 20px;
-  background: var(--gray-50);
-  border-radius: 16px;
-  border: 2px solid var(--gray-100);
+  padding: 12px 11px;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid var(--gray-200);
   transition: all 0.2s ease;
 }
 
 .task-item:hover {
-  border-color: var(--primary-light);
-  background: white;
+  border-color: rgba(99, 102, 241, 0.4);
+  box-shadow: 0 2px 10px rgba(99, 102, 241, 0.08);
 }
 
 .task-info {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
 }
 
 .task-copy {
@@ -277,8 +317,8 @@
 }
 
 .task-icon {
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   border-radius: 12px;
   display: flex;
@@ -287,47 +327,51 @@
 }
 
 .task-icon svg {
-  width: 22px;
-  height: 22px;
+  width: 18px;
+  height: 18px;
   fill: white;
 }
 
 .task-name {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--gray-800);
 }
 
 .task-status-text {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--gray-500);
   font-weight: 500;
 }
 
 .task-options {
   display: flex;
-  gap: 10px;
+  gap: 6px;
+  align-items: stretch;
 }
 
 .radio-option {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 10px 16px;
-  border-radius: 12px;
+  gap: 5px;
+  padding: 8px 11px;
+  border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s ease;
-  background: var(--gray-100);
-  border: 2px solid transparent;
+  background: white;
+  border: 1px solid var(--gray-200);
+  appearance: none;
+  font: inherit;
 }
 
-.radio-option input {
-  display: none;
+.radio-option:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
 }
 
 .radio-circle {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   border: 2px solid var(--gray-300);
   transition: all 0.2s ease;
@@ -338,15 +382,15 @@
 
 .radio-circle::after {
   content: '';
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: transparent;
   transition: all 0.2s ease;
 }
 
 .radio-label {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--gray-600);
   transition: color 0.2s ease;
@@ -410,7 +454,7 @@
 }
 
 .submit-section {
-  margin-top: 15px;
+  margin-top: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -422,12 +466,12 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 20px 60px;
+  padding: 14px 28px;
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   color: white;
   border: none;
-  border-radius: 20px;
-  font-size: 18px;
+  border-radius: 14px;
+  font-size: 16px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -464,13 +508,13 @@
 
 .submit-hint {
   margin: 0;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--gray-500);
 }
 
 .submit-btn svg {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   fill: white;
 }
 
@@ -585,19 +629,19 @@
 /* Responsive */
 @media (max-width: 1024px) {
   .tasks-content {
-    padding: 20px 15px;
+    padding: 14px 12px;
   }
 }
 
 @media (max-width: 768px) {
   .tasks-content {
-    padding: 15px 12px;
+    padding: 14px 12px;
   }
 
   .task-item {
     flex-direction: column;
     align-items: flex-start;
-    gap: 15px;
+    gap: 12px;
   }
 
   .task-options {
@@ -608,11 +652,11 @@
   .radio-option {
     flex: 1;
     justify-content: center;
-    padding: 12px 10px;
+    padding: 9px 6px;
   }
 
   .radio-label {
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .tasks-legend {
@@ -627,49 +671,68 @@
 
   .quick-btn {
     text-align: center;
-    padding: 10px 8px;
+    padding: 8px 6px;
   }
 }
 
 @media (max-width: 576px) {
-  .selected-date-badge {
+  .tasks-content {
+    padding: 12px 10px;
+  }
+
+  .tasks-top-row {
     gap: 8px;
+  }
+
+  .selected-date-badge {
+    gap: 4px;
     background: white;
     color: var(--gray-700);
     border: 1px solid var(--gray-200);
     border-radius: 999px;
-    padding: 8px 14px;
-    font-size: 13px;
-    margin-bottom: 14px;
+    padding: 6px 10px;
+    font-size: 11px;
+    margin-bottom: 0;
+    margin-left: auto;
     box-shadow: none;
   }
 
   .selected-date-badge svg {
-    width: 18px;
-    height: 18px;
+    width: 14px;
+    height: 14px;
     fill: var(--primary);
   }
 
+  .edit-date-btn {
+    width: 22px;
+    height: 22px;
+  }
+
+  .edit-date-btn svg {
+    width: 12px;
+    height: 12px;
+  }
+
   .tasks-title {
-    font-size: 22px;
+    font-size: 20px;
   }
 
   .task-category {
-    padding: 20px 15px;
+    padding: 14px 12px;
   }
 
   .task-item {
-    padding: 15px;
+    padding: 11px 10px;
   }
 
   .task-icon {
-    width: 38px;
-    height: 38px;
+    width: 34px;
+    height: 34px;
   }
 
   .task-icon svg {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
   }
 
   .task-name {
@@ -683,7 +746,7 @@
   .submit-btn {
     width: 100%;
     justify-content: center;
-    padding: 18px 30px;
+    padding: 13px 20px;
   }
 
   .modal {
@@ -702,18 +765,19 @@
 
   .tasks-legend {
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 8px;
+    padding: 9px 12px;
   }
 
   .tasks-progress-card {
-    padding: 14px;
+    padding: 12px;
   }
 
   .progress-head strong {
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .quick-actions {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }

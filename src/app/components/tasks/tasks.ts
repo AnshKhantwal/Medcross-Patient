@@ -22,8 +22,8 @@ export interface Task {
 })
 export class TasksComponent {
   showModal = signal(false);
-  selectedDate = signal<Date | null>(null);
-  step = signal<'calendar' | 'tasks'>('calendar');
+  selectedDate = signal<Date | null>(new Date());
+  step = signal<'calendar' | 'tasks'>('tasks');
   
   formattedDate = computed(() => {
     const date = this.selectedDate();
@@ -35,6 +35,10 @@ export class TasksComponent {
       year: 'numeric'
     });
   });
+
+  showCalendar(): void {
+    this.step.set('calendar');
+  }
 
   tasks: Task[] = [
     { id: 'medicine', name: 'Medicine', category: 'Health', icon: 'pill', status: null },
@@ -54,12 +58,12 @@ export class TasksComponent {
     this.step.set('tasks');
   }
 
+  closeCalendar(): void {
+    this.step.set('tasks');
+  }
+
   goBack(): void {
-    if (this.step() === 'tasks') {
-      this.step.set('calendar');
-    } else {
-      this.router.navigate(['/dashboard']);
-    }
+    this.router.navigate(['/dashboard']);
   }
 
   setTaskStatus(taskId: string, status: TaskStatus): void {

@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CalendarComponent } from '../calendar/calendar';
 import { SubmissionHistoryService } from '../../services/submission-history.service';
+import { AuthService } from '../../services/auth.service';
 
 export interface VitalData {
   heightFeet: number | null;
@@ -24,8 +25,8 @@ export interface VitalData {
 })
 export class VitalsComponent {
   showModal = signal(false);
-  selectedDate = signal<Date | null>(null);
-  step = signal<'calendar' | 'form'>('calendar');
+  selectedDate = signal<Date | null>(new Date());
+  step = signal<'calendar' | 'form'>('form');
   
   formattedDate = computed(() => {
     const date = this.selectedDate();
@@ -37,6 +38,10 @@ export class VitalsComponent {
       year: 'numeric'
     });
   });
+
+  showCalendar(): void {
+    this.step.set('calendar');
+  }
   
   vitals: VitalData = {
     heightFeet: null,
@@ -52,7 +57,8 @@ export class VitalsComponent {
 
   constructor(
     private router: Router,
-    private submissionHistoryService: SubmissionHistoryService
+    private submissionHistoryService: SubmissionHistoryService,
+    private authService: AuthService
   ) {}
 
   onDateSelected(date: Date): void {
@@ -60,12 +66,12 @@ export class VitalsComponent {
     this.step.set('form');
   }
 
+  closeCalendar(): void {
+    this.step.set('form');
+  }
+
   goBack(): void {
-    if (this.step() === 'form') {
-      this.step.set('calendar');
-    } else {
-      this.router.navigate(['/dashboard']);
-    }
+    this.router.navigate(['/dashboard']);
   }
 
   onSubmit(): void {
@@ -104,5 +110,9 @@ export class VitalsComponent {
     };
     this.selectedDate.set(null);
     this.step.set('calendar');
+  }
+
+  logout(): void {
+    this.authService.logout();
   }
 }
