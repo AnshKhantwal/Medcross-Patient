@@ -13,6 +13,11 @@ export class LoginComponent {
   patientNumber = signal('');
   password = signal('');
   showError = signal(false);
+  showPassword = signal(false);
+
+  togglePasswordVisibility(): void {
+    this.showPassword.update(v => !v);
+  }
 
   constructor(private authService: AuthService, private router: Router) {
     // Redirect if already logged in

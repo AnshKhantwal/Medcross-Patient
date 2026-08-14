@@ -19,6 +19,23 @@ export class ChangePasswordComponent {
     goBack() {
       this.router.navigate(['/dashboard']);
     }
+
+  showCurrent = signal(false);
+  showNew = signal(false);
+  showConfirm = signal(false);
+
+  toggleShowCurrent(): void {
+    this.showCurrent.update(v => !v);
+  }
+
+  toggleShowNew(): void {
+    this.showNew.update(v => !v);
+  }
+
+  toggleShowConfirm(): void {
+    this.showConfirm.update(v => !v);
+  }
+
   form = new FormGroup({
     currentPassword: new FormControl('', [Validators.required]),
     newPassword: new FormControl('', [Validators.required, Validators.minLength(8)]),

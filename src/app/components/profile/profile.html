@@ -1,30 +1,70 @@
-<div class="profile-back-row-flat">
-  <button class="back-btn-flat" type="button" (click)="goBack()" aria-label="Back to Dashboard">← Back to Dashboard</button>
+<div class="back-link" (click)="goBack()">
+  <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+  Back
 </div>
+
 <div class="profile-card">
-  <h2 class="profile-title">Profile</h2>
+  <h2 class="profile-title">Your Profile</h2>
+  <p class="profile-subtitle">Manage your personal details and account photo.</p>
+
+  <div class="avatar-section">
+    <div class="avatar-wrapper">
+      @if (avatarUrl()) {
+        <img [src]="avatarUrl()" alt="Profile photo" class="avatar-img">
+      } @else {
+        <div class="avatar-placeholder">
+          <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        </div>
+      }
+      <button type="button" class="avatar-edit-btn" (click)="triggerFileInput()" aria-label="Change profile photo">
+        <svg viewBox="0 0 24 24"><path d="M12 9a3.5 3.5 0 100 7 3.5 3.5 0 000-7zM9 2L7.17 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2h-3.17L15 2H9zm3 15a5 5 0 110-10 5 5 0 010 10z"/></svg>
+      </button>
+    </div>
+    <input #fileInput type="file" accept="image/*" class="sr-only-input" (change)="onAvatarSelected($event)">
+    <div class="avatar-actions">
+      <button type="button" class="avatar-link-btn" (click)="triggerFileInput()">Upload photo</button>
+      @if (avatarUrl()) {
+        <span class="avatar-actions-sep">&middot;</span>
+        <button type="button" class="avatar-link-btn danger" (click)="removeAvatar()">Remove</button>
+      }
+    </div>
+  </div>
+
   <form [formGroup]="form" (ngSubmit)="saveProfile()" class="profile-form">
     <div class="form-group modern">
       <div class="input-wrapper">
-        <input id="name" formControlName="name" type="text" required />
-        <label for="name">Name</label>
+        <input id="name" formControlName="name" type="text" placeholder=" " required />
+        <label for="name">Full Name</label>
       </div>
       <div class="error" *ngIf="form.controls.name.invalid && form.controls.name.touched">Name is required.</div>
     </div>
     <div class="form-group modern">
       <div class="input-wrapper">
-        <input id="email" formControlName="email" type="email" required />
-        <label for="email">Email</label>
+        <input id="email" formControlName="email" type="email" placeholder=" " required />
+        <label for="email">Email Address</label>
       </div>
       <div class="error" *ngIf="form.controls.email.invalid && form.controls.email.touched">Valid email required.</div>
     </div>
     <div class="form-group modern">
       <div class="input-wrapper">
-        <input id="phone" formControlName="phone" type="tel" required />
-        <label for="phone">Phone</label>
+        <input id="phone" formControlName="phone" type="tel" placeholder=" " required />
+        <label for="phone">Phone Number</label>
       </div>
       <div class="error" *ngIf="form.controls.phone.invalid && form.controls.phone.touched">Phone is required.</div>
     </div>
     <button type="submit" class="save-btn" [disabled]!="isDirty() || !isValid()">Save Changes</button>
   </form>
+
+  <div class="profile-divider"></div>
+
+  <button type="button" class="security-row" (click)="goToChangePassword()">
+    <span class="security-row-icon">
+      <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+    </span>
+    <span class="security-row-text">
+      <strong>Change Password</strong>
+      <small>Update your account password</small>
+    </span>
+    <svg class="security-row-chevron" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+  </button>
 </div>

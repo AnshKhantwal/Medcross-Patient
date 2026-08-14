@@ -22,6 +22,10 @@ export class DashboardComponent {
     return this.authService.getPatient();
   }
 
+  get avatarUrl() {
+    return this.authService.getAvatar();
+  }
+
   toggleFab(): void {
     this.fabOpen.update(v => !v);
   }

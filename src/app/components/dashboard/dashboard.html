@@ -4,7 +4,7 @@
     <p class="zen-date">{{ currentDate() }}</p>
     
     <div class="profile-image-container">
-      <img src="image.png" alt="Profile" class="profile-image">
+      <img [src]="avatarUrl() || 'image.png'" alt="Profile" class="profile-image">
     </div>
     
     <p class="zen-quote">"Take a deep breath. You're doing great."</p>

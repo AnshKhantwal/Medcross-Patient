@@ -11,14 +11,16 @@ import { AuthService } from '../../services/auth.service';
   styleUrl: './layout.scss'
 })
 export class LayoutComponent {
-  sidebarOpen = signal(false);
   profileMenuOpen = signal(false);
-
 
   constructor(private authService: AuthService, private router: Router) {}
 
   get patient() {
     return this.authService.getPatient();
+  }
+
+  get avatarUrl() {
+    return this.authService.getAvatar();
   }
 
   toggleProfileMenu(event: Event): void {
@@ -47,16 +49,8 @@ export class LayoutComponent {
     this.router.navigate(['/change-password']);
   }
 
-  toggleSidebar(): void {
-    this.sidebarOpen.update(v => !v);
-  }
-
-  closeSidebar(): void {
-    this.sidebarOpen.set(false);
-  }
-
   logout(): void {
-    this.closeSidebar();
+    this.closeProfileMenu();
     this.authService.logout();
   }
 }

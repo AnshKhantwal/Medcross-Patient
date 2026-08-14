@@ -3,7 +3,6 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CalendarComponent } from '../calendar/calendar';
 import { SubmissionHistoryService } from '../../services/submission-history.service';
-import { AuthService } from '../../services/auth.service';
 
 export interface VitalData {
   heightFeet: number | null;
@@ -57,8 +56,7 @@ export class VitalsComponent {
 
   constructor(
     private router: Router,
-    private submissionHistoryService: SubmissionHistoryService,
-    private authService: AuthService
+    private submissionHistoryService: SubmissionHistoryService
   ) {}
 
   onDateSelected(date: Date): void {
@@ -110,9 +108,5 @@ export class VitalsComponent {
     };
     this.selectedDate.set(null);
     this.step.set('calendar');
-  }
-
-  logout(): void {
-    this.authService.logout();
   }
 }

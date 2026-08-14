@@ -11,12 +11,31 @@ export interface Patient {
 })
 export class AuthService {
   private currentPatient = signal<Patient | null>(null);
+  private avatar = signal<string | null>(null);
 
   constructor(private router: Router) {
     // Check localStorage for existing session
     const saved = localStorage.getItem('medcross_patient');
     if (saved) {
       this.currentPatient.set(JSON.parse(saved));
+    }
+
+    const savedAvatar = localStorage.getItem('medcross_avatar');
+    if (savedAvatar) {
+      this.avatar.set(savedAvatar);
+    }
+  }
+
+  getAvatar() {
+    return this.avatar;
+  }
+
+  setAvatar(dataUrl: string | null): void {
+    this.avatar.set(dataUrl);
+    if (dataUrl) {
+      localStorage.setItem('medcross_avatar', dataUrl);
+    } else {
+      localStorage.removeItem('medcross_avatar');
     }
   }
 
