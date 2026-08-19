@@ -1,0 +1,20 @@
+Built and verified a working end-to-end patient app, running locally right now:
+
+c:\repos\design\medcross-patient-api — new, separate ASP.NET Core Web API
+
+JWT auth with BCrypt-hashed passwords, per-account lockout after 5 failed attempts, IP rate limiting on login
+Forced password change enforced server-side (403 on every other endpoint until cleared) — not just a UI gate
+patient_id always comes from the JWT, never the request body
+Writes vitals into the CPS's real dbo.VitalSign/dbo.Visit tables (clinicians see them immediately in ChiefComplaints.aspx); reuses dbo.Patient.password/user_id, columns that already existed unused
+Task check-ins go to a new PatientTaskLog table, kept separate from the staff CRM Tasks table
+Migration only adds 2 new tables — legacy tables excluded from migrations, untouched
+c:\repos\design\medcross-patient — the existing Angular UI, now wired for real
+
+AuthService, authGuard, SubmissionHistoryService, change-password, profile all call the real API instead of localStorage/hardcoded 'medcross'
+Along the way I hit and fixed two real integration bugs a design-only pass wouldn't have caught: SQL error 334 (legacy Patient table has triggers, so EF Core's default UPDATE...OUTPUT had to be disabled), and decimal precision mismatches that would've silently truncated phone numbers/SpO2 values.
+
+Not yet done (flagging so nothing's assumed silently finished):
+
+Backfill: only patient row_id=1 has a seeded credential; running it for all ~19k patients needs the Scripts/HashTool + a loop, or a provisioning hook on new-patient creation (Phase 1, step 4 of the plan)
+Real JWT signing key + connection string still point at dev placeholders — must be replaced via env vars before any real deployment
+Both dev servers (localhost:4200, localhost:5080) are still running against the PolyClinic062626 snapshot DB, not the live PolyClinic DB — say the word when you want to point it at production, or I can stop them now

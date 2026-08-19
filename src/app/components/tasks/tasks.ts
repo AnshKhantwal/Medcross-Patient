@@ -1,8 +1,9 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CalendarComponent } from '../calendar/calendar';
 import { SubmissionHistoryService } from '../../services/submission-history.service';
+import { ToastService } from '../../services/toast.service';
 
 export type TaskStatus = 'complete' | 'partial' | 'none' | null;
 
@@ -47,6 +48,9 @@ export class TasksComponent {
     { id: 'chota_recharge', name: 'Chota Recharge', category: 'Recharge', icon: 'water', status: null },
     { id: 'yoga_meditation', name: 'Yoga Meditation', category: 'Wellness', icon: 'meditation', status: null },
   ];
+
+  private toast = inject(ToastService);
+  isSubmitting = signal(false);
 
   constructor(
     private router: Router,
@@ -108,12 +112,22 @@ export class TasksComponent {
 
   onSubmit(): void {
     const selectedDate = this.selectedDate();
-    if (selectedDate) {
-      this.submissionHistoryService.saveTasks(selectedDate, this.tasks);
+    if (!selectedDate || this.isSubmitting()) {
+      return;
     }
 
-    console.log('Tasks submitted:', { date: selectedDate, tasks: this.tasks });
-    this.showModal.set(true);
+    this.isSubmitting.set(true);
+    this.submissionHistoryService.saveTasks(selectedDate, this.tasks).subscribe({
+      next: () => {
+        this.isSubmitting.set(false);
+        this.showModal.set(true);
+      },
+      error: (err) => {
+        this.isSubmitting.set(false);
+        const message = err?.error?.error ?? 'Could not save tasks. Please try again.';
+        this.toast.show(message, 'error');
+      }
+    });
   }
 
   closeModal(): void {

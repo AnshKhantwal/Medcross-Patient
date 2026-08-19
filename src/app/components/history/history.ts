@@ -15,9 +15,22 @@ export class HistoryComponent {
   private readonly submissionHistoryService = inject(SubmissionHistoryService);
 
   step = signal<'dates' | 'details'>('dates');
-  historyItems = signal<HistoryTimelineItem[]>(this.submissionHistoryService.getAllHistory());
+  historyItems = signal<HistoryTimelineItem[]>([]);
+  isLoading = signal(true);
   filterMode = signal<'all' | 'vitals' | 'tasks'>('all');
   searchQuery = signal<string>('');
+
+  constructor() {
+    this.submissionHistoryService.getAllHistory().subscribe({
+      next: (items) => {
+        this.historyItems.set(items);
+        this.isLoading.set(false);
+      },
+      error: () => {
+        this.isLoading.set(false);
+      }
+    });
+  }
 
   filteredHistoryItems = computed<HistoryTimelineItem[]>(() => {
     const mode = this.filterMode();

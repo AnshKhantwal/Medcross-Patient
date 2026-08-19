@@ -225,15 +225,36 @@
   background: transparent;
   transition: 0.18s cubic-bezier(.4,0,.2,1);
 }
+/* Float on value-or-focus only. :valid must not gate this: these controls are
+   disabled (read-only profile), and a disabled input is barred from constraint
+   validation, so it matches neither :valid nor :invalid -- the label used to stay
+   put and overlap the value. :placeholder-shown works regardless of disabled. */
 .input-wrapper input:focus + label,
-.input-wrapper input:not(:placeholder-shown):not(:focus):valid + label,
-.input-wrapper input:valid + label {
+.input-wrapper input:not(:placeholder-shown) + label {
   top: 5px;
   left: 12px;
   font-size: 0.82rem;
   color: var(--primary);
   background: var(--gray-50);
   padding: 0 4px;
+}
+
+/* Focus swaps the field to a white background, so the label chip must follow */
+.input-wrapper input:focus + label {
+  background: #fff;
+}
+
+/* Read-only fields: keep the value fully legible. iOS Safari washes out disabled
+   text unless -webkit-text-fill-color is set explicitly. */
+.input-wrapper input:disabled {
+  color: var(--gray-900);
+  -webkit-text-fill-color: var(--gray-900);
+  opacity: 1;
+  cursor: default;
+}
+
+.input-wrapper input:disabled + label {
+  color: var(--gray-500);
 }
 
 .error {

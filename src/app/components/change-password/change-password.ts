@@ -1,6 +1,7 @@
 import { Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { ToastService } from '../../services/toast.service';
+import { AuthService } from '../../services/auth.service';
 import { Component, signal, computed } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -16,9 +17,13 @@ import { ChangeDetectionStrategy } from '@angular/core';
 export class ChangePasswordComponent {
   constructor(private router: Router) {}
   toast = inject(ToastService);
-    goBack() {
-      this.router.navigate(['/dashboard']);
-    }
+  private authService = inject(AuthService);
+
+  isSubmitting = signal(false);
+
+  goBack() {
+    this.router.navigate(['/dashboard']);
+  }
 
   showCurrent = signal(false);
   showNew = signal(false);
@@ -49,10 +54,26 @@ export class ChangePasswordComponent {
   }
 
   changePassword() {
-    if (this.isValid()) {
-      // TODO: Change password logic
-      this.toast.show('Password changed!', 'success');
-      this.form.reset();
+    if (!this.isValid() || this.isSubmitting()) {
+      return;
     }
+
+    const currentPassword = this.form.controls.currentPassword.value ?? '';
+    const newPassword = this.form.controls.newPassword.value ?? '';
+
+    this.isSubmitting.set(true);
+    this.authService.changePassword(currentPassword, newPassword).subscribe({
+      next: () => {
+        this.isSubmitting.set(false);
+        this.toast.show('Password changed!', 'success');
+        this.form.reset();
+        this.router.navigate(['/dashboard']);
+      },
+      error: (err) => {
+        this.isSubmitting.set(false);
+        const message = err?.error?.error ?? 'Could not change password. Please try again.';
+        this.toast.show(message, 'error');
+      }
+    });
   }
 }

@@ -18,7 +18,6 @@
         </button>
         <div class="user-info">
           <div class="user-name">{{ patient()?.name || 'Patient' }}</div>
-          <div class="user-id">ID: {{ patient()?.number || '---' }}</div>
         </div>
         <div class="profile-menu" *ngIf="profileMenuOpen()">
           <button class="profile-menu-item" (click)="goToProfile()">

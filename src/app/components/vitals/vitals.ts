@@ -1,8 +1,9 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CalendarComponent } from '../calendar/calendar';
 import { SubmissionHistoryService } from '../../services/submission-history.service';
+import { ToastService } from '../../services/toast.service';
 
 export interface VitalData {
   heightFeet: number | null;
@@ -54,6 +55,9 @@ export class VitalsComponent {
     spo2: null
   };
 
+  private toast = inject(ToastService);
+  isSubmitting = signal(false);
+
   constructor(
     private router: Router,
     private submissionHistoryService: SubmissionHistoryService
@@ -74,12 +78,22 @@ export class VitalsComponent {
 
   onSubmit(): void {
     const selectedDate = this.selectedDate();
-    if (selectedDate) {
-      this.submissionHistoryService.saveVitals(selectedDate, this.vitals);
+    if (!selectedDate || this.isSubmitting()) {
+      return;
     }
 
-    console.log('Vitals submitted:', { date: selectedDate, vitals: this.vitals });
-    this.showModal.set(true);
+    this.isSubmitting.set(true);
+    this.submissionHistoryService.saveVitals(selectedDate, this.vitals).subscribe({
+      next: () => {
+        this.isSubmitting.set(false);
+        this.showModal.set(true);
+      },
+      error: (err) => {
+        this.isSubmitting.set(false);
+        const message = err?.error?.error ?? 'Could not save vitals. Please try again.';
+        this.toast.show(message, 'error');
+      }
+    });
   }
 
   closeModal(): void {

@@ -52,7 +52,7 @@
       </div>
       <div class="error" *ngIf="form.controls.phone.invalid && form.controls.phone.touched">Phone is required.</div>
     </div>
-    <button type="submit" class="save-btn" [disabled]!="isDirty() || !isValid()">Save Changes</button>
+    <button type="submit" class="save-btn" [disabled]="!isDirty() || !isValid()">Save Changes</button>
   </form>
 
   <div class="profile-divider"></div>

@@ -14,25 +14,35 @@ export class LoginComponent {
   password = signal('');
   showError = signal(false);
   showPassword = signal(false);
+  isSubmitting = signal(false);
 
   togglePasswordVisibility(): void {
     this.showPassword.update(v => !v);
   }
 
   constructor(private authService: AuthService, private router: Router) {
-    // Redirect if already logged in
     if (this.authService.isLoggedIn()) {
       this.router.navigate(['/dashboard']);
     }
   }
 
   onSubmit(): void {
-    const success = this.authService.login(this.patientNumber(), this.password());
-    if (success) {
-      this.showError.set(false);
-      this.router.navigate(['/dashboard']);
-    } else {
-      this.showError.set(true);
+    if (this.isSubmitting()) {
+      return;
     }
+
+    this.isSubmitting.set(true);
+    this.showError.set(false);
+
+    this.authService.login(this.patientNumber(), this.password()).subscribe({
+      next: (res) => {
+        this.isSubmitting.set(false);
+        this.router.navigate([res.mustChangePassword ? '/change-password' : '/dashboard']);
+      },
+      error: () => {
+        this.isSubmitting.set(false);
+        this.showError.set(true);
+      }
+    });
   }
 }

@@ -1,6 +1,9 @@
-import { Injectable } from '@angular/core';
-import { Task } from '../components/tasks/tasks';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { forkJoin, map, Observable } from 'rxjs';
+import { Task, TaskStatus } from '../components/tasks/tasks';
 import { VitalData } from '../components/vitals/vitals';
+import { environment } from '../../environments/environment';
 
 export interface VitalsSubmission {
   date: string;
@@ -24,95 +27,177 @@ export interface HistoryTimelineItem extends HistoryRecord {
   lastSubmittedAt: string;
 }
 
+interface ApiVitalsRecord {
+  id: number;
+  date: string;
+  heightCm: number | null;
+  weightKg: number | null;
+  temperatureF: number | null;
+  bpSystolic: number | null;
+  bpDiastolic: number | null;
+  respiratoryRate: number | null;
+  pulse: number | null;
+  spo2: number | null;
+}
+
+interface ApiTaskCheckIn {
+  taskKey: string;
+  status: string;
+}
+
+interface ApiTasksHistoryEntry {
+  date: string;
+  tasks: ApiTaskCheckIn[];
+  lastSubmittedAtUtc: string;
+}
+
+const TASK_META: Record<string, { name: string; category: string; icon: string }> = {
+  medicine: { name: 'Medicine', category: 'Health', icon: 'pill' },
+  diet: { name: 'Diet', category: 'Nutrition', icon: 'diet' },
+  exercise: { name: 'Exercise', category: 'Wellness', icon: 'exercise' },
+  chota_recharge: { name: 'Chota Recharge', category: 'Recharge', icon: 'water' },
+  yoga_meditation: { name: 'Yoga Meditation', category: 'Wellness', icon: 'meditation' }
+};
+
 @Injectable({
   providedIn: 'root'
 })
 export class SubmissionHistoryService {
-  private readonly vitalsStorageKey = 'medcross.vitals.history';
-  private readonly tasksStorageKey = 'medcross.tasks.history';
+  private readonly http = inject(HttpClient);
+  private readonly base = `${environment.apiBaseUrl}/api`;
 
-  saveVitals(date: Date, vitals: VitalData): void {
-    const normalizedDate = this.normalizeDate(date);
-    const vitalsHistory = this.readMap<VitalsSubmission>(this.vitalsStorageKey);
+  saveVitals(date: Date, vitals: VitalData): Observable<void> {
+    const heightCm = this.feetInchesToCm(vitals.heightFeet, vitals.heightInches);
 
-    vitalsHistory[normalizedDate] = {
-      date: normalizedDate,
-      submittedAt: new Date().toISOString(),
-      vitals: this.clone(vitals)
+    const payload = {
+      date: this.toIsoDate(date),
+      heightCm,
+      weightKg: vitals.weight,
+      temperatureF: vitals.temperature,
+      bpSystolic: vitals.bpSystolic,
+      bpDiastolic: vitals.bpDiastolic,
+      respiratoryRate: vitals.respiratoryRate,
+      pulse: vitals.pulse,
+      spo2: vitals.spo2
     };
 
-    this.writeMap(this.vitalsStorageKey, vitalsHistory);
+    return this.http.post<void>(`${this.base}/vitals`, payload);
   }
 
-  saveTasks(date: Date, tasks: Task[]): void {
-    const normalizedDate = this.normalizeDate(date);
-    const tasksHistory = this.readMap<TasksSubmission>(this.tasksStorageKey);
-
-    tasksHistory[normalizedDate] = {
-      date: normalizedDate,
-      submittedAt: new Date().toISOString(),
-      tasks: this.clone(tasks)
+  saveTasks(date: Date, tasks: Task[]): Observable<void> {
+    const payload = {
+      date: this.toIsoDate(date),
+      tasks: tasks
+        .filter((t) => t.status !== null)
+        .map((t) => ({ taskKey: t.id, status: t.status }))
     };
 
-    this.writeMap(this.tasksStorageKey, tasksHistory);
+    return this.http.post<void>(`${this.base}/tasks`, payload);
   }
 
-  getHistoryByDate(date: Date): HistoryRecord {
-    const normalizedDate = this.normalizeDate(date);
-    const vitalsHistory = this.readMap<VitalsSubmission>(this.vitalsStorageKey);
-    const tasksHistory = this.readMap<TasksSubmission>(this.tasksStorageKey);
+  getHistoryByDate(date: Date): Observable<HistoryRecord> {
+    const isoDate = this.toIsoDate(date);
 
-    return {
-      date: normalizedDate,
-      vitals: vitalsHistory[normalizedDate] ?? null,
-      tasks: tasksHistory[normalizedDate] ?? null
-    };
-  }
-
-  getAllHistory(): HistoryTimelineItem[] {
-    const vitalsHistory = this.readMap<VitalsSubmission>(this.vitalsStorageKey);
-    const tasksHistory = this.readMap<TasksSubmission>(this.tasksStorageKey);
-
-    const allDates = new Set<string>([
-      ...Object.keys(vitalsHistory),
-      ...Object.keys(tasksHistory)
-    ]);
-
-    return Array.from(allDates)
-      .map((date) => {
-        const vitals = vitalsHistory[date] ?? null;
-        const tasks = tasksHistory[date] ?? null;
-        const lastSubmittedAt = this.resolveLastSubmittedAt(vitals?.submittedAt, tasks?.submittedAt);
-
+    return forkJoin({
+      vitals: this.http.get<ApiVitalsRecord[]>(`${this.base}/vitals`),
+      tasks: this.http.get<{ date: string; tasks: ApiTaskCheckIn[] }>(`${this.base}/tasks`, {
+        params: { date: isoDate }
+      })
+    }).pipe(
+      map(({ vitals, tasks }) => {
+        const vitalRecord = vitals.find((v) => this.toIsoDate(new Date(v.date)) === isoDate) ?? null;
         return {
-          date,
-          vitals,
-          tasks,
-          lastSubmittedAt
+          date: isoDate,
+          vitals: vitalRecord ? this.toVitalsSubmission(vitalRecord) : null,
+          tasks: tasks.tasks.length ? this.toTasksSubmission(isoDate, tasks.tasks, isoDate) : null
         };
       })
-      .sort((a, b) => new Date(b.lastSubmittedAt).getTime() - new Date(a.lastSubmittedAt).getTime());
+    );
+  }
+
+  getAllHistory(): Observable<HistoryTimelineItem[]> {
+    return forkJoin({
+      vitals: this.http.get<ApiVitalsRecord[]>(`${this.base}/vitals`),
+      tasksHistory: this.http.get<ApiTasksHistoryEntry[]>(`${this.base}/tasks/history`)
+    }).pipe(
+      map(({ vitals, tasksHistory }) => {
+        const vitalsByDate = new Map<string, VitalsSubmission>();
+        for (const v of vitals) {
+          const isoDate = this.toIsoDate(new Date(v.date));
+          vitalsByDate.set(isoDate, this.toVitalsSubmission(v));
+        }
+
+        const tasksByDate = new Map<string, TasksSubmission>();
+        for (const entry of tasksHistory) {
+          const isoDate = this.toIsoDate(new Date(entry.date));
+          tasksByDate.set(isoDate, this.toTasksSubmission(isoDate, entry.tasks, entry.lastSubmittedAtUtc));
+        }
+
+        const allDates = new Set<string>([...vitalsByDate.keys(), ...tasksByDate.keys()]);
+
+        return Array.from(allDates)
+          .map((date) => {
+            const vitalsEntry = vitalsByDate.get(date) ?? null;
+            const tasksEntry = tasksByDate.get(date) ?? null;
+            const lastSubmittedAt = this.resolveLastSubmittedAt(
+              vitalsEntry?.submittedAt,
+              tasksEntry?.submittedAt
+            );
+
+            return { date, vitals: vitalsEntry, tasks: tasksEntry, lastSubmittedAt };
+          })
+          .sort((a, b) => new Date(b.lastSubmittedAt).getTime() - new Date(a.lastSubmittedAt).getTime());
+      })
+    );
+  }
+
+  private toVitalsSubmission(v: ApiVitalsRecord): VitalsSubmission {
+    const { feet, inches } = this.cmToFeetInches(v.heightCm);
+    return {
+      date: this.toIsoDate(new Date(v.date)),
+      submittedAt: v.date,
+      vitals: {
+        heightFeet: feet,
+        heightInches: inches,
+        weight: v.weightKg,
+        temperature: v.temperatureF,
+        bpSystolic: v.bpSystolic,
+        bpDiastolic: v.bpDiastolic,
+        respiratoryRate: v.respiratoryRate,
+        pulse: v.pulse,
+        spo2: v.spo2
+      }
+    };
+  }
+
+  private toTasksSubmission(isoDate: string, apiTasks: ApiTaskCheckIn[], submittedAt: string): TasksSubmission {
+    const tasks: Task[] = apiTasks.map((t) => ({
+      id: t.taskKey,
+      name: TASK_META[t.taskKey]?.name ?? t.taskKey,
+      category: TASK_META[t.taskKey]?.category ?? 'Other',
+      icon: TASK_META[t.taskKey]?.icon ?? 'pill',
+      status: t.status as TaskStatus
+    }));
+
+    return { date: isoDate, submittedAt, tasks };
   }
 
   private resolveLastSubmittedAt(vitalsSubmittedAt?: string, tasksSubmittedAt?: string): string {
     if (!vitalsSubmittedAt && !tasksSubmittedAt) {
       return new Date(0).toISOString();
     }
-
     if (!vitalsSubmittedAt) {
       return tasksSubmittedAt!;
     }
-
     if (!tasksSubmittedAt) {
       return vitalsSubmittedAt;
     }
-
     return new Date(vitalsSubmittedAt).getTime() >= new Date(tasksSubmittedAt).getTime()
       ? vitalsSubmittedAt
       : tasksSubmittedAt;
   }
 
-  private normalizeDate(date: Date): string {
+  private toIsoDate(date: Date): string {
     const normalized = new Date(date);
     normalized.setHours(0, 0, 0, 0);
     const year = normalized.getFullYear();
@@ -121,32 +206,21 @@ export class SubmissionHistoryService {
     return `${year}-${month}-${day}`;
   }
 
-  private readMap<T>(storageKey: string): Record<string, T> {
-    if (typeof localStorage === 'undefined') {
-      return {};
+  private feetInchesToCm(feet: number | null, inches: number | null): number | null {
+    if (feet === null && inches === null) {
+      return null;
     }
-
-    const raw = localStorage.getItem(storageKey);
-    if (!raw) {
-      return {};
-    }
-
-    try {
-      return JSON.parse(raw) as Record<string, T>;
-    } catch {
-      return {};
-    }
+    const totalInches = (feet ?? 0) * 12 + (inches ?? 0);
+    return Math.round(totalInches * 2.54 * 100) / 100;
   }
 
-  private writeMap<T>(storageKey: string, value: Record<string, T>): void {
-    if (typeof localStorage === 'undefined') {
-      return;
+  private cmToFeetInches(cm: number | null): { feet: number | null; inches: number | null } {
+    if (cm === null) {
+      return { feet: null, inches: null };
     }
-
-    localStorage.setItem(storageKey, JSON.stringify(value));
-  }
-
-  private clone<T>(value: T): T {
-    return JSON.parse(JSON.stringify(value)) as T;
+    const totalInches = cm / 2.54;
+    const feet = Math.floor(totalInches / 12);
+    const inches = Math.round(totalInches % 12);
+    return { feet, inches };
   }
 }
