@@ -1,0 +1,9 @@
+[build]
+  command = "npm run build"
+  publish = "dist/medcross-patient/browser"
+
+# SPA fallback so deep links / refreshes resolve to the Angular app
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
