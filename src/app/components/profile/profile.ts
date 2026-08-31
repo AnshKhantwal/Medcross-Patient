@@ -3,7 +3,7 @@ import { inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ToastService } from '../../services/toast.service';
 import { AuthService } from '../../services/auth.service';
-import { Component, signal, computed, ElementRef, ViewChild } from '@angular/core';
+import { Component, signal, ElementRef, ViewChild } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ChangeDetectionStrategy } from '@angular/core';
@@ -39,23 +39,17 @@ export class ProfileComponent {
     this.router.navigate(['/change-password']);
   }
 
-  // dbo.Patient has no email column -- name/phone come from the CPS record and are
-  // effectively read-only here; there is no profile-update endpoint yet.
-  user = signal({ name: '', email: '', phone: '' });
+  user = signal({ name: '', phone: '' });
 
   form = new FormGroup({
-    name: new FormControl({ value: '', disabled: true }, [Validators.required]),
-    email: new FormControl({ value: '', disabled: true }),
-    phone: new FormControl({ value: '', disabled: true }, [Validators.required]),
+    name: new FormControl('', [Validators.required]),
+    phone: new FormControl('', [Validators.required, Validators.pattern(/^[\d\s+()-]{6,}$/)]),
   });
-
-  readonly isDirty = computed(() => this.form.dirty);
-  readonly isValid = computed(() => this.form.valid);
 
   constructor(private router: Router) {
     this.http.get<PatientProfile>(`${environment.apiBaseUrl}/api/patient/me`).subscribe({
       next: (profile) => {
-        this.user.set({ name: profile.name, email: '', phone: profile.phone ?? '' });
+        this.user.set({ name: profile.name, phone: profile.phone ?? '' });
         this.form.patchValue({ name: profile.name, phone: profile.phone ?? '' });
       },
       error: () => this.toast.show('Could not load profile.', 'error')
@@ -91,11 +85,31 @@ export class ProfileComponent {
     this.authService.setAvatar(null);
   }
 
+  saving = signal(false);
+
   saveProfile() {
-    if (this.form.valid) {
-      // TODO: Save profile logic
-      this.toast.show('Profile saved!', 'success');
-      this.form.markAsPristine();
+    if (this.form.invalid || this.saving()) {
+      return;
     }
+
+    const payload = {
+      name: this.form.controls.name.value?.trim() ?? '',
+      phone: this.form.controls.phone.value?.trim() ?? '',
+    };
+
+    this.saving.set(true);
+    this.http.put<PatientProfile>(`${environment.apiBaseUrl}/api/patient/me`, payload).subscribe({
+      next: (profile) => {
+        this.saving.set(false);
+        this.user.set({ name: profile.name, phone: profile.phone ?? '' });
+        this.form.patchValue({ name: profile.name, phone: profile.phone ?? '' });
+        this.form.markAsPristine();
+        this.toast.show('Profile updated. Use your new phone number next time you log in.', 'success');
+      },
+      error: (err) => {
+        this.saving.set(false);
+        this.toast.show(err?.error?.error ?? 'Could not save profile.', 'error');
+      },
+    });
   }
 }
