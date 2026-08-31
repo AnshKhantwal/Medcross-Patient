@@ -13,23 +13,33 @@
   /* A soft brand glow off the top edge gives the canvas depth without
      ornament — the colour never reaches full saturation. */
   background:
-    radial-gradient(900px 520px at 50% -12%, rgba(var(--primary-rgb), 0.13), transparent 62%),
-    linear-gradient(180deg, #fbfcfd 0%, #eaeff2 100%);
+    radial-gradient(1100px 600px at 15% -10%, rgba(var(--primary-rgb), 0.20), transparent 60%),
+    radial-gradient(900px 520px at 100% 110%, rgba(var(--secondary-rgb), 0.16), transparent 60%),
+    linear-gradient(160deg, #0d9488 0%, #0f766e 45%, #0e7490 100%);
 }
 
 .login-card {
   background: var(--surface);
-  border: 1px solid rgba(15, 23, 42, 0.06);
-  border-radius: 20px;
-  padding: var(--space-7) var(--space-6) var(--space-6);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8) var(--space-7) var(--space-7);
   width: 100%;
-  max-width: 396px;
-  /* Layered shadow — contact, mid, and ambient — reads as real elevation
-     where a single flat shadow reads as a sticker. */
+  max-width: 404px;
+  position: relative;
+  overflow: hidden;
   box-shadow:
-    0 1px 2px rgba(15, 23, 42, 0.04),
-    0 8px 24px rgba(15, 23, 42, 0.06),
-    0 24px 48px -12px rgba(15, 23, 42, 0.10);
+    0 2px 6px rgba(15, 23, 42, 0.08),
+    0 18px 40px rgba(15, 23, 42, 0.18),
+    0 40px 80px -20px rgba(13, 148, 136, 0.35);
+}
+
+/* Brand accent bar across the top edge of the card */
+.login-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-light), var(--primary), var(--secondary));
 }
 
 .login-header {
@@ -38,24 +48,23 @@
 }
 
 .logo-container {
-  width: 54px;
-  height: 54px;
-  background: var(--primary);
-  border-radius: 16px;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(145deg, var(--primary-light) 0%, var(--primary) 55%, var(--primary-dark) 100%);
+  border-radius: 18px;
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 0 auto var(--space-4);
-  /* Brand-tinted drop plus a top inner highlight so the mark has dimension
-     without a gradient fill. */
   box-shadow:
-    0 6px 16px rgba(var(--primary-rgb), 0.30),
-    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    0 8px 20px rgba(var(--primary-rgb), 0.38),
+    0 0 0 6px rgba(var(--primary-rgb), 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .logo-container svg {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   fill: white;
 }
 
@@ -106,14 +115,14 @@
    white with a brand ring when active. */
 .input-wrapper input {
   width: 100%;
-  padding: 13px 16px 13px 42px;
-  border: 1px solid transparent;
+  padding: 15px 16px 15px 44px;
+  border: 1.5px solid var(--gray-200);
   border-radius: var(--radius-sm);
   font-size: var(--text-md);
   font-weight: 400;
-  background: var(--gray-50);
-  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.07);
-  transition: background 0.15s ease, box-shadow 0.15s ease;
+  background: #fff;
+  box-shadow: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
   color: var(--text-primary);
 }
 
@@ -123,15 +132,14 @@
 }
 
 .login-card .input-wrapper input:hover {
-  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.14);
+  border-color: var(--gray-300);
 }
 
 .login-card .input-wrapper input:focus {
   outline: none;
   background: var(--surface);
-  box-shadow:
-    inset 0 0 0 1px var(--primary),
-    0 0 0 3px rgba(var(--primary-rgb), 0.14);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.14);
 }
 
 .input-wrapper:focus-within svg {
@@ -176,31 +184,58 @@
 
 .login-btn {
   width: 100%;
-  padding: 13px;
-  background: var(--primary);
+  padding: 15px;
+  background: linear-gradient(145deg, var(--primary-light) 0%, var(--primary) 50%, var(--primary-dark) 100%);
   color: white;
   border: none;
   border-radius: var(--radius-sm);
   font-size: var(--text-md);
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.01em;
   cursor: pointer;
-  transition: background 0.15s ease, box-shadow 0.15s ease;
-  margin-top: var(--space-2);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  margin-top: var(--space-3);
   box-shadow:
     0 1px 2px rgba(15, 23, 42, 0.08),
-    0 4px 12px rgba(var(--primary-rgb), 0.24);
+    0 8px 20px rgba(var(--primary-rgb), 0.35);
 }
 
-.login-btn:hover {
-  background: var(--primary-dark);
+.login-btn:hover:not(:disabled) {
+  filter: brightness(1.04);
+  transform: translateY(-1px);
   box-shadow:
     0 1px 2px rgba(15, 23, 42, 0.10),
-    0 6px 16px rgba(var(--primary-rgb), 0.32);
+    0 12px 26px rgba(var(--primary-rgb), 0.42);
 }
 
-.login-btn:active {
+.login-btn:active:not(:disabled) {
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.10);
+}
+
+.login-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+}
+
+.login-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-spinner {
+  width: 15px;
+  height: 15px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: btn-spin 0.6s linear infinite;
+}
+
+@keyframes btn-spin {
+  to { transform: rotate(360deg); }
 }
 
 .login-footer {
