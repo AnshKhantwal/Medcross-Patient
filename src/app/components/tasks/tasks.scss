@@ -22,8 +22,8 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--gray-500);
-  font-size: 13px;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
   font-weight: 500;
   cursor: pointer;
   margin-bottom: 0;
@@ -44,26 +44,28 @@
   fill: currentColor;
 }
 
+/* Contextual info, not a primary action — a tinted chip rather than a filled
+   brand pill competing with the submit button. */
 .selected-date-badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-  color: white;
+  gap: 6px;
+  background: var(--tint-primary);
+  border: 1px solid var(--tint-primary-strong);
+  color: var(--primary-dark);
   padding: 6px 12px;
-  border-radius: 10px;
-  font-size: 11px;
+  border-radius: 999px;
+  font-size: var(--text-xs);
   font-weight: 600;
   margin-bottom: 0;
   margin-left: auto;
   flex-shrink: 0;
-  box-shadow: 0 1px 4px rgba(var(--primary-rgb), 0.2);
 }
 
 .selected-date-badge svg {
-  width: 16px;
-  height: 16px;
-  fill: white;
+  width: 15px;
+  height: 15px;
+  fill: var(--primary);
 }
 
 .edit-date-btn {
@@ -82,8 +84,7 @@
 }
 
 .edit-date-btn:hover {
-  background: rgba(255, 255, 255, 0.18);
-  transform: translateY(-1px);
+  background: var(--tint-primary-strong);
 }
 
 .edit-date-btn svg {
@@ -92,15 +93,16 @@
 }
 
 .tasks-title {
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--gray-900);
-  margin-bottom: 2px;
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  color: var(--text-primary);
+  margin-bottom: var(--space-1);
 }
 
 .tasks-subtitle {
-  font-size: 13px;
-  color: var(--gray-500);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
   margin: 0;
 }
 
@@ -109,18 +111,18 @@
   gap: 14px;
   margin-bottom: 12px;
   padding: 8px 12px;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-soft);
 }
 
 .legend-item {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 500;
-  color: var(--gray-600);
+  color: var(--text-secondary);
 }
 
 .legend-dot {
@@ -148,10 +150,10 @@
 }
 
 .tasks-progress-card {
-  background: white;
-  border-radius: 14px;
-  padding: 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  box-shadow: var(--shadow-soft);
   border: 1px solid var(--gray-100);
   margin-bottom: 12px;
 }
@@ -165,18 +167,20 @@
 
 .progress-head h3 {
   margin: 0;
-  font-size: 14px;
-  color: var(--gray-900);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
 .progress-head p {
   margin: 2px 0 0;
-  color: var(--gray-500);
-  font-size: 11px;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
 }
 
 .progress-head strong {
-  font-size: 16px;
+  font-size: var(--text-md);
+  font-weight: 600;
   color: var(--primary);
 }
 
@@ -191,7 +195,7 @@
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  background: var(--primary);
   transition: width 0.25s ease;
 }
 
@@ -203,8 +207,8 @@
 }
 
 .status-chip {
-  font-size: 11px;
-  font-weight: 700;
+  font-size: var(--text-xs);
+  font-weight: 600;
   border-radius: 999px;
   padding: 4px 9px;
 }
@@ -237,7 +241,7 @@
   color: var(--gray-700);
   border-radius: 8px;
   padding: 6px 8px;
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -267,19 +271,20 @@
 
 .task-category {
   background: var(--gray-50);
-  border-radius: 18px;
-  padding: 16px;
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
   border: 1px solid var(--gray-100);
   box-shadow: none;
 }
 
 .category-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--gray-900);
-  margin-bottom: 10px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--gray-200);
+  font-size: var(--text-md);
+  font-weight: 600;
+  line-height: var(--leading-snug);
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border-default);
 }
 
 .task-list {
@@ -319,8 +324,8 @@
 .task-icon {
   width: 36px;
   height: 36px;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-  border-radius: 12px;
+  background: var(--tint-primary);
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -329,18 +334,18 @@
 .task-icon svg {
   width: 18px;
   height: 18px;
-  fill: white;
+  fill: var(--primary);
 }
 
 .task-name {
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--gray-800);
+  color: var(--text-primary);
 }
 
 .task-status-text {
-  font-size: 11px;
-  color: var(--gray-500);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
   font-weight: 500;
 }
 
@@ -390,9 +395,9 @@
 }
 
 .radio-label {
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 600;
-  color: var(--gray-600);
+  color: var(--text-secondary);
   transition: color 0.2s ease;
 }
 
@@ -467,36 +472,20 @@
   align-items: center;
   gap: 12px;
   padding: 14px 28px;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  background: var(--primary);
   color: white;
   border: none;
-  border-radius: 14px;
-  font-size: 16px;
-  font-weight: 700;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-md);
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.submit-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  transition: left 0.5s ease;
-}
-
-.submit-btn:hover::before {
-  left: 100%;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: var(--shadow-brand);
 }
 
 .submit-btn:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 50px rgba(var(--primary-rgb), 0.4);
+  background: var(--primary-dark);
+  box-shadow: var(--shadow-brand-hover);
 }
 
 .submit-btn:disabled {
@@ -508,8 +497,8 @@
 
 .submit-hint {
   margin: 0;
-  font-size: 12px;
-  color: var(--gray-500);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
 }
 
 .submit-btn svg {
@@ -566,7 +555,7 @@
 .success-circle {
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, var(--success) 0%, #15803d 100%);
+  background: var(--success);
   border-radius: 50%;
   display: flex;
   justify-content: center;
@@ -593,17 +582,18 @@
 }
 
 .modal-title {
-  font-size: 28px;
-  font-weight: 800;
-  color: var(--gray-900);
-  margin-bottom: 12px;
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
 }
 
 .modal-message {
-  font-size: 16px;
-  color: var(--gray-500);
-  line-height: 1.6;
-  margin-bottom: 30px;
+  font-size: var(--text-md);
+  color: var(--text-secondary);
+  line-height: var(--leading-relaxed);
+  margin-bottom: var(--space-7);
 }
 
 .modal-btn {
@@ -611,19 +601,20 @@
   align-items: center;
   gap: 10px;
   padding: 18px 50px;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  background: var(--primary);
   color: white;
   border: none;
-  border-radius: 18px;
-  font-size: 17px;
-  font-weight: 700;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-md);
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: var(--shadow-brand);
 }
 
 .modal-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 15px 35px rgba(var(--primary-rgb), 0.4);
+  background: var(--primary-dark);
+  box-shadow: var(--shadow-brand-hover);
 }
 
 /* Responsive */
@@ -656,7 +647,7 @@
   }
 
   .radio-label {
-    font-size: 11px;
+    font-size: var(--text-xs);
   }
 
   .tasks-legend {
@@ -691,7 +682,7 @@
     border: 1px solid var(--gray-200);
     border-radius: 999px;
     padding: 6px 10px;
-    font-size: 11px;
+    font-size: var(--text-xs);
     margin-bottom: 0;
     margin-left: auto;
     box-shadow: none;
@@ -714,7 +705,7 @@
   }
 
   .tasks-title {
-    font-size: 20px;
+    font-size: var(--text-xl);
   }
 
   .task-category {
@@ -736,11 +727,11 @@
   }
 
   .task-name {
-    font-size: 14px;
+    font-size: var(--text-sm);
   }
 
   .task-status-text {
-    font-size: 11px;
+    font-size: var(--text-xs);
   }
 
   .submit-btn {
@@ -760,7 +751,7 @@
   }
 
   .modal-title {
-    font-size: 24px;
+    font-size: var(--text-2xl);
   }
 
   .tasks-legend {
@@ -774,7 +765,7 @@
   }
 
   .progress-head strong {
-    font-size: 16px;
+    font-size: var(--text-md);
   }
 
   .quick-actions {
