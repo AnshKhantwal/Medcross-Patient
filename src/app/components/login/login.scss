@@ -22,9 +22,9 @@
   background: var(--surface);
   border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: var(--radius-lg);
-  padding: var(--space-8) var(--space-7) var(--space-7);
+  padding: var(--space-7) var(--space-6) var(--space-6);
   width: 100%;
-  max-width: 404px;
+  max-width: 380px;
   position: relative;
   overflow: hidden;
   box-shadow:
@@ -44,7 +44,7 @@
 
 .login-header {
   text-align: center;
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-5);
 }
 
 .logo-container {
@@ -55,7 +55,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0 auto var(--space-4);
+  margin: 0 auto var(--space-3);
   box-shadow:
     0 8px 20px rgba(var(--primary-rgb), 0.38),
     0 0 0 6px rgba(var(--primary-rgb), 0.10),
@@ -84,7 +84,7 @@
 }
 
 .input-group {
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-3);
 }
 
 .input-group label {
@@ -240,7 +240,7 @@
 }
 
 .login-footer {
-  margin-top: var(--space-5);
+  margin-top: var(--space-4);
 }
 
 /* The demo-password hint is real guidance, so it gets a proper callout rather
