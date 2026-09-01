@@ -1,11 +1,9 @@
-import { Component, signal, computed, inject } from '@angular/core';
-import { NgIf } from '@angular/common';
+import { Component, inject } from '@angular/core';
 import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-toast',
   standalone: true,
-  imports: [NgIf],
   templateUrl: './toast.html',
   styleUrl: './toast.scss',
 })
