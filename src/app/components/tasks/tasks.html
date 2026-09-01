@@ -28,22 +28,7 @@
       </div>
     </div>
     <h1 class="tasks-title">Daily Tasks</h1>
-    <p class="tasks-subtitle">Track your daily health activities</p>
-  </div>
-
-  <div class="tasks-legend">
-    <div class="legend-item">
-      <span class="legend-dot complete"></span>
-      <span>Complete</span>
-    </div>
-    <div class="legend-item">
-      <span class="legend-dot partial"></span>
-      <span>Partial</span>
-    </div>
-    <div class="legend-item">
-      <span class="legend-dot none"></span>
-      <span>None</span>
-    </div>
+    <p class="tasks-subtitle">Mark how each activity went today</p>
   </div>
 
   <div class="tasks-progress-card">
@@ -128,11 +113,18 @@
     }
 
     <div class="submit-section">
-      <button type="button" class="submit-btn" [disabled]="!canSubmit()" (click)="onSubmit()">
-        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-        Submit Tasks
+      <button type="button" class="submit-btn" [disabled]="!canSubmit() || isSubmitting()" (click)="onSubmit()">
+        @if (isSubmitting()) {
+          <span class="btn-spinner" aria-hidden="true"></span>
+          Submitting…
+        } @else {
+          <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+          Submit Tasks
+        }
       </button>
-      @if (!canSubmit()) {
+      @if (canSubmit()) {
+        <p class="submit-hint">Saved to {{ formattedDate() }}</p>
+      } @else {
         <p class="submit-hint">Mark at least one task to submit.</p>
       }
     </div>
@@ -149,8 +141,8 @@
           <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
         </div>
       </div>
-      <h3 class="modal-title">Tasks Recorded! 🎉</h3>
-      <p class="modal-message">Your daily activities have been saved successfully. Keep up the great work on your health journey!</p>
+      <h3 class="modal-title">Tasks recorded</h3>
+      <p class="modal-message">Your activities for {{ formattedDate() }} have been saved. Keep it going.</p>
       <button class="modal-btn" (click)="closeModal()">
         Back to Dashboard
       </button>
