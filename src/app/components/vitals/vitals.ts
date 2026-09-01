@@ -58,6 +58,18 @@ export class VitalsComponent {
   private toast = inject(ToastService);
   isSubmitting = signal(false);
 
+  /** True once at least one measurement has been entered — gates the submit button. */
+  get hasAnyValue(): boolean {
+    return Object.values(this.vitals).some(
+      (v) => v !== null && v !== undefined && (v as unknown) !== ''
+    );
+  }
+
+  /** Gentle, non-blocking flag when a value falls outside the plausible clinical range. */
+  outOfRange(value: number | null, min: number, max: number): boolean {
+    return value !== null && value !== undefined && (value < min || value > max);
+  }
+
   constructor(
     private router: Router,
     private submissionHistoryService: SubmissionHistoryService
