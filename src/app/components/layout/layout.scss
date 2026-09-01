@@ -3,7 +3,7 @@
   min-height: 100vh;
   min-height: 100dvh;
   background: var(--gray-100);
-  overflow-x: hidden;
+  overflow-x: clip;
   width: 100%;
 }
 
@@ -311,7 +311,7 @@
   margin-left: 280px;
   min-height: 100vh;
   min-height: 100dvh;
-  overflow-x: hidden;
+  overflow-x: clip;
   display: flex;
   flex-direction: column;
 }
@@ -331,6 +331,7 @@
   position: sticky;
   top: 0;
   z-index: 90;
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.12);
 }
 
 .mobile-brand {

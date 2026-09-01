@@ -10,7 +10,9 @@
 }
 
 html, body {
-  overflow-x: hidden;
+  /* clip (not hidden) so it doesn't become a scroll container — that would
+     break `position: sticky` on the mobile header and back links. */
+  overflow-x: clip;
   width: 100%;
 }
 
@@ -118,7 +120,7 @@ body {
   background: var(--gray-100);
   min-height: 100vh;
   min-height: 100dvh;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 .app-container {
@@ -126,7 +128,7 @@ body {
   min-height: 100vh;
   min-height: 100dvh;
   position: relative;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* Focus visibility for accessibility across the app */

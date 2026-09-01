@@ -5,11 +5,16 @@
       Back
     </div>
     <div class="history-header">
-      <h1 class="history-title">Submission History</h1>
-      <p class="history-subtitle">Filter or search dates, then open details.</p>
+      <h1 class="history-title">Your History</h1>
+      <p class="history-subtitle">Review the vitals and tasks you've logged.</p>
     </div>
 
-    @if (historyItems().length > 0) {
+    @if (isLoading()) {
+      <section class="history-card empty-container" aria-busy="true" aria-label="Loading history">
+        <span class="loading-spinner" aria-hidden="true"></span>
+        <p class="empty-state">Loading your history…</p>
+      </section>
+    } @else if (historyItems().length > 0) {
       <section class="section-block">
         <div class="history-tools" aria-label="History filters">
           <div class="filter-tabs" role="tablist" aria-label="Submission type filter">
@@ -40,7 +45,7 @@
             <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.5 6.5 0 1016 15.5l.27.28v.79L21 21.49 22.49 20 15.5 14zM6.5 11a4.5 4.5 0 114.5 4.5A4.5 4.5 0 016.5 11z"/></svg>
             <input
               type="text"
-              placeholder="Search full date (e.g. Month Date, Year)"
+              placeholder="Search by date"
               [value]="searchQuery()"
               (input)="onSearch($event)">
           </label>
@@ -68,7 +73,7 @@
         </div>
 
         @if (filteredHistoryItems().length === 0) {
-          <p class="empty-state filter-empty">No dates match your current filter/search.</p>
+          <p class="empty-state filter-empty">No dates match your search.</p>
         }
       </section>
     } @else {
@@ -85,8 +90,8 @@
       Back
     </div>
     <div class="history-header">
-      <h1 class="history-title">Reading Details</h1>
-      <p class="history-subtitle">Showing submitted details for the selected date.</p>
+      <h1 class="history-title">Details</h1>
+      <p class="history-subtitle">What you logged on this date.</p>
     </div>
 
     <section class="section-block">
@@ -126,7 +131,7 @@
                 </li>
                 <li class="metric-item">
                   <span>Weight</span>
-                  <strong>{{ selectedRecord()!.vitals!.vitals.weight ?? '--' }} Kg</strong>
+                  <strong>{{ selectedRecord()!.vitals!.vitals.weight ?? '--' }} kg</strong>
                 </li>
                 <li class="metric-item">
                   <span>Temperature</span>
@@ -138,14 +143,14 @@
                 </li>
                 <li class="metric-item">
                   <span>Pulse</span>
-                  <strong>{{ selectedRecord()!.vitals!.vitals.pulse ?? '--' }} /Min</strong>
+                  <strong>{{ selectedRecord()!.vitals!.vitals.pulse ?? '--' }} bpm</strong>
                 </li>
                 <li class="metric-item">
                   <span>Respiratory Rate</span>
-                  <strong>{{ selectedRecord()!.vitals!.vitals.respiratoryRate ?? '--' }} /Min</strong>
+                  <strong>{{ selectedRecord()!.vitals!.vitals.respiratoryRate ?? '--' }} breaths/min</strong>
                 </li>
                 <li class="metric-item">
-                  <span>SPO2</span>
+                  <span>Oxygen (SpO<sub>2</sub>)</span>
                   <strong>{{ selectedRecord()!.vitals!.vitals.spo2 ?? '--' }} %</strong>
                 </li>
               </ul>

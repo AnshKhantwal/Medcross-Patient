@@ -9,7 +9,7 @@
 
 .history-header {
   text-align: center;
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-5);
 }
 
 /* Matches the .back-link used on Vitals / Tasks for a consistent back control */
@@ -55,11 +55,12 @@
 }
 
 .history-title {
-  font-size: clamp(1.375rem, 3.2vw, var(--text-3xl));
-  font-weight: 700;
+  font-size: var(--text-xl);
+  font-weight: 600;
+  letter-spacing: -0.01em;
   line-height: var(--leading-tight);
   color: var(--text-primary);
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-1);
 }
 
 .history-subtitle {
@@ -69,7 +70,7 @@
 
 .section-block {
   max-width: min(1100px, 100%);
-  margin: 0 auto var(--space-5);
+  margin: 0 auto var(--space-3);
 }
 
 .section-title {
@@ -112,8 +113,8 @@
 }
 
 .filter-tab.active {
-  background: #ecfeff;
-  color: var(--primary);
+  background: var(--tint-primary);
+  color: var(--primary-dark);
 }
 
 .search-box {
@@ -413,9 +414,35 @@
 
 .empty-state {
   color: var(--text-muted);
-  font-size: var(--text-base);
+  font-size: var(--text-sm);
   line-height: var(--leading-relaxed);
   margin: 0;
+}
+
+.metric-item span sub {
+  font-size: 0.7em;
+}
+
+/* Loading state — spinner + line, centred in the card */
+.empty-container[aria-busy="true"] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-7) var(--space-5);
+}
+
+.loading-spinner {
+  width: 26px;
+  height: 26px;
+  border: 3px solid var(--gray-200);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: history-spin 0.7s linear infinite;
+}
+
+@keyframes history-spin {
+  to { transform: rotate(360deg); }
 }
 
 .filter-empty {
@@ -511,6 +538,24 @@
 
   .title-icon {
     font-size: 16px;
+  }
+}
+
+/* Sticky "Back" control on mobile — bleeds to the screen edges and parks just
+   below the sticky app header. */
+@media (max-width: 1024px) {
+  .history-content > .back-link {
+    position: sticky;
+    top: var(--mobile-header-h);
+    z-index: 20;
+    display: flex;
+    box-sizing: border-box;
+    margin: calc(-1 * clamp(12px, 2.2vw, 24px));
+    margin-bottom: var(--space-2);
+    padding: 10px clamp(12px, 2.2vw, 24px);
+    background: rgba(251, 252, 253, 0.92);
+    backdrop-filter: blur(6px);
+    width: calc(100% + 2 * clamp(12px, 2.2vw, 24px));
   }
 }
 
