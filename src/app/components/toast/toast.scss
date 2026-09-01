@@ -21,6 +21,11 @@
   animation: toast-in 0.24s cubic-bezier(.4, 0, .2, 1);
 }
 
+.toast.success { border-color: rgba(var(--success-rgb), 0.3); background: #f5fbf7; }
+.toast.error { border-color: rgba(var(--danger-rgb), 0.3); background: #fdf5f5; }
+.toast.warning { border-color: rgba(var(--warning-rgb), 0.3); background: #fdf9f2; }
+.toast.info { border-color: rgba(var(--primary-rgb), 0.3); background: #f2fbfa; }
+
 .toast-icon {
   flex-shrink: 0;
   width: 30px;
@@ -53,6 +58,7 @@
 
 @media (max-width: 1024px) {
   .toast {
+    /* clears the FAB that sits above the tab bar on the dashboard */
     bottom: calc(var(--tab-bar-clearance) + 14px);
     max-width: calc(100vw - 32px);
   }
