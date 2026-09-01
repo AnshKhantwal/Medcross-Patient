@@ -1,15 +1,103 @@
 <div class="dashboard-content">
-  <div class="zen-welcome">
-    <h1 class="zen-greeting">Hi, <span>{{ patient()?.name || 'Patient' }}</span>!</h1>
-    <p class="zen-date">{{ currentDate() }}</p>
-    
-    <div class="profile-image-container">
-      <img [src]="avatarUrl() || 'image.png'" alt="Profile" class="profile-image">
+  @if (isLoading()) {
+    <div class="dash-loading" aria-busy="true">
+      <span class="loading-spinner" aria-hidden="true"></span>
+      <p>Loading your dashboard…</p>
     </div>
-    
-    <p class="zen-quote">"Take a deep breath. You're doing great."</p>
-    <p class="zen-author">— Your Health Companion</p>
-  </div>
+  } @else if (!hasData()) {
+    <!-- First run — nothing logged yet -->
+    <div class="zen-welcome">
+      <h1 class="zen-greeting">Hi, <span>{{ patient()?.name || 'Patient' }}</span>!</h1>
+      <p class="zen-date">{{ currentDate() }}</p>
+
+      <div class="profile-image-container">
+        <img [src]="avatarUrl() || 'image.png'" alt="Profile" class="profile-image">
+      </div>
+
+      <p class="zen-quote">"Take a deep breath. You're doing great."</p>
+      <p class="zen-author">— Your Health Companion</p>
+
+      <button type="button" class="zen-cta" (click)="goToVitals()">Record your first vitals</button>
+    </div>
+  } @else {
+    <!-- Populated dashboard -->
+    <header class="dash-hero">
+      <p class="dash-hero-greeting">{{ greeting() }},</p>
+      <h1 class="dash-hero-name">{{ patient()?.name || 'there' }}</h1>
+      <p class="dash-hero-date">{{ currentDate() }}</p>
+    </header>
+
+    <div class="dash-body">
+
+    <section class="dash-card" aria-labelledby="dash-vitals-h">
+      <div class="dash-card-head">
+        <span class="dash-card-ico">
+          <svg viewBox="0 0 24 24"><path d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3C14.8 12 16.8 13 19 13v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1L6 8.3V13h2V9.6l1.8-.7z"/></svg>
+        </span>
+        <h2 id="dash-vitals-h">Latest vitals</h2>
+        @if (latestVitalsDate()) {
+          <span class="dash-card-meta">{{ relativeDate(latestVitalsDate()) }}</span>
+        }
+      </div>
+
+      @if (vitalTiles().length) {
+        <div class="vital-tiles">
+          @for (tile of vitalTiles(); track tile.label) {
+            <div class="vital-tile">
+              <span class="vt-value">{{ tile.value }}<small>{{ tile.unit }}</small></span>
+              <span class="vt-label">{{ tile.label }}</span>
+            </div>
+          }
+        </div>
+        <button type="button" class="dash-link" (click)="goToHistory()">View all history</button>
+      } @else {
+        <p class="dash-empty">No vitals recorded yet.</p>
+        <button type="button" class="dash-btn" (click)="goToVitals()">Record vitals</button>
+      }
+    </section>
+
+    <section class="dash-card" aria-labelledby="dash-tasks-h">
+      <div class="dash-card-head">
+        <span class="dash-card-ico">
+          <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>
+        </span>
+        <h2 id="dash-tasks-h">Today's tasks</h2>
+        @if (loggedTasksToday()) {
+          <span class="dash-card-meta">{{ taskStats().pct }}%</span>
+        }
+      </div>
+
+      @if (loggedTasksToday()) {
+        <div class="task-row">
+          <span class="tp-ring" [style.background]="'conic-gradient(var(--primary) ' + taskStats().pct + '%, var(--gray-100) 0)'">
+            <span class="tp-ring-num">{{ taskStats().pct }}%</span>
+          </span>
+          <div class="tp-chips">
+            <span class="tp-chip complete">{{ taskStats().complete }} complete</span>
+            <span class="tp-chip partial">{{ taskStats().partial }} partial</span>
+            <span class="tp-chip none">{{ taskStats().none }} none</span>
+          </div>
+        </div>
+        <button type="button" class="dash-link" (click)="goToTasks()">Update today's tasks</button>
+      } @else {
+        <p class="dash-empty">You haven't logged today's tasks yet.</p>
+        <button type="button" class="dash-btn" (click)="goToTasks()">Log tasks</button>
+      }
+    </section>
+
+    <section class="dash-actions" aria-label="Quick actions">
+      <button type="button" class="dash-action" (click)="goToVitals()">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+        Record vitals
+      </button>
+      <button type="button" class="dash-action" (click)="goToTasks()">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>
+        Log tasks
+      </button>
+    </section>
+
+    </div>
+  }
 </div>
 
 <!-- FAB Button -->

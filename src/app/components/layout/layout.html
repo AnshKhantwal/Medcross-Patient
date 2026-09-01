@@ -10,11 +10,7 @@
       </div>
       <div class="user-profile">
         <button class="user-avatar profile-menu-btn" (click)="toggleProfileMenu($event)" aria-label="Open profile menu">
-          @if (avatarUrl()) {
-            <img [src]="avatarUrl()" alt="" class="user-avatar-img">
-          } @else {
-            <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-          }
+          <img [src]="avatarUrl() || 'image.png'" alt="" class="user-avatar-img">
         </button>
         <div class="user-info">
           <div class="user-name">{{ patient()?.name || 'Patient' }}</div>
@@ -77,11 +73,7 @@
         <span class="mobile-title">MedCross</span>
       </div>
       <button class="mobile-avatar profile-menu-btn" (click)="toggleProfileMenu($event)" aria-label="Open profile menu">
-        @if (avatarUrl()) {
-          <img [src]="avatarUrl()" alt="" class="user-avatar-img">
-        } @else {
-          <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-        }
+        <img [src]="avatarUrl() || 'image.png'" alt="" class="user-avatar-img">
       </button>
       <div class="profile-menu mobile" *ngIf="profileMenuOpen()">
         <button class="profile-menu-item" (click)="goToProfile()">
