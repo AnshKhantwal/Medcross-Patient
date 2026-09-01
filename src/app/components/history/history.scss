@@ -546,13 +546,14 @@
 @media (max-width: 1024px) {
   .history-content > .back-link {
     position: sticky;
-    top: var(--mobile-header-h);
+    top: calc(var(--mobile-header-h) + 8px);
     z-index: 20;
     display: flex;
     box-sizing: border-box;
     margin: calc(-1 * clamp(12px, 2.2vw, 24px));
+    margin-top: calc(-1 * clamp(12px, 2.2vw, 24px) + 6px);
     margin-bottom: var(--space-2);
-    padding: 10px clamp(12px, 2.2vw, 24px);
+    padding: 8px clamp(12px, 2.2vw, 24px);
     background: rgba(251, 252, 253, 0.92);
     backdrop-filter: blur(6px);
     width: calc(100% + 2 * clamp(12px, 2.2vw, 24px));
