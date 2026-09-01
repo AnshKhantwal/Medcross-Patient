@@ -71,7 +71,7 @@ export class ChangePasswordComponent {
     this.authService.changePassword(currentPassword, newPassword).subscribe({
       next: () => {
         this.isSubmitting.set(false);
-        this.toast.show('Password changed!', 'success');
+        this.toast.show('Password changed successfully', 'success');
         this.form.reset();
         this.router.navigate(['/dashboard']);
       },
