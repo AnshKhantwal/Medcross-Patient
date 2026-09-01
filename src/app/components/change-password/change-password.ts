@@ -22,7 +22,7 @@ export class ChangePasswordComponent {
   isSubmitting = signal(false);
 
   goBack() {
-    this.router.navigate(['/dashboard']);
+    this.router.navigate(['/profile']);
   }
 
   showCurrent = signal(false);
@@ -73,7 +73,7 @@ export class ChangePasswordComponent {
         this.isSubmitting.set(false);
         this.toast.show('Password changed successfully', 'success');
         this.form.reset();
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/profile']);
       },
       error: (err) => {
         this.isSubmitting.set(false);
