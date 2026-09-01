@@ -2,7 +2,7 @@ import { Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { ToastService } from '../../services/toast.service';
 import { AuthService } from '../../services/auth.service';
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ChangeDetectionStrategy } from '@angular/core';
@@ -47,9 +47,15 @@ export class ChangePasswordComponent {
     confirmPassword: new FormControl('', [Validators.required]),
   });
 
-  readonly isValid = computed(() => this.form.valid && this.passwordsMatch());
+  // Plain method, not a computed(): the reactive form's validity and control
+  // values aren't signals, so a computed() would cache the initial (invalid)
+  // result and never update as the user types. Re-evaluated on each change
+  // detection pass instead.
+  isValid(): boolean {
+    return this.form.valid && this.passwordsMatch();
+  }
 
-  passwordsMatch() {
+  passwordsMatch(): boolean {
     return this.form.controls.newPassword.value === this.form.controls.confirmPassword.value;
   }
 
