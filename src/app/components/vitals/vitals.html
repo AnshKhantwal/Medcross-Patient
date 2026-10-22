@@ -1,10 +1,10 @@
 <!-- Calendar Step -->
 @if (step() === 'calendar') {
   <div class="calendar-step-shell">
-    <div class="back-link standalone" (click)="closeCalendar()">
+    <button type="button" class="back-link standalone" (click)="closeCalendar()">
       <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
       Back
-    </div>
+    </button>
     <app-calendar (dateSelected)="onDateSelected($event)"></app-calendar>
   </div>
 }
@@ -14,10 +14,10 @@
 <div class="vitals-content">
   <div class="vitals-header">
     <div class="vitals-top-row">
-      <div class="back-link" (click)="goBack()">
+      <button type="button" class="back-link" (click)="goBack()">
         <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
         <span>Back</span>
-      </div>
+      </button>
       <div class="selected-date-badge">
         <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8 4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg>
         {{ formattedDate() }}
@@ -106,7 +106,7 @@
       <div class="vital-field">
         <label class="vital-label" for="pulse">
           <span class="vital-label-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M3 12h4l2-6 4 12 2-6h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </span>
           <span class="vital-label-text">Pulse</span>
         </label>
@@ -125,7 +125,7 @@
       <div class="vital-field">
         <label class="vital-label" for="respiratoryRate">
           <span class="vital-label-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 3v9m0 0c0 3-2 5-5 5-2 0-3-1-3-3 0-3 2-7 4-8m4 6c0 3 2 5 5 5 2 0 3-1 3-3 0-3-2-7-4-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </span>
           <span class="vital-label-text">Respiratory Rate</span>
         </label>
@@ -144,7 +144,7 @@
       <div class="vital-field full-width">
         <label class="vital-label" for="spo2">
           <span class="vital-label-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2.7S5 10 5 14.5a7 7 0 0014 0C19 10 12 2.7 12 2.7z"/></svg>
           </span>
           <span class="vital-label-text">Oxygen (SpO<sub>2</sub>)</span>
         </label>
@@ -167,7 +167,7 @@
       <div class="vital-field full-width-on-mobile">
         <span class="vital-label" id="height-label">
           <span class="vital-label-icon">
-            <svg viewBox="0 0 24 24"><path d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M21 6H3a1 1 0 00-1 1v10a1 1 0 001 1h18a1 1 0 001-1V7a1 1 0 00-1-1zm-1 10h-2v-3h-2v3h-2v-2h-2v2h-2v-3H8v3H6v-2H4V8h16v8z"/></svg>
           </span>
           <span class="vital-label-text">Height</span>
         </span>

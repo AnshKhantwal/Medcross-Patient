@@ -214,14 +214,125 @@
 }
 
 .vital-tile {
+  --lvl: var(--gray-300);
+  --lvl-text: var(--text-muted);
+  position: relative;
+  overflow: hidden;
   background: var(--gray-50);
   border: 1px solid var(--gray-100);
+  border-left: 3px solid var(--lvl);
   border-radius: var(--radius-sm);
   padding: 12px 14px;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 6px;
 }
+
+.vital-tile.lvl-ok { --lvl: var(--success); --lvl-text: #15803d; }
+.vital-tile.lvl-watch { --lvl: var(--warning); --lvl-text: #b45309; }
+.vital-tile.lvl-alert { --lvl: var(--danger); --lvl-text: #b91c1c; }
+
+.vital-summary {
+  font-size: var(--text-xs);
+  color: #15803d;
+  font-weight: 600;
+  margin-bottom: 10px;
+  line-height: var(--leading-snug);
+}
+
+.vital-summary.attention { color: #b45309; }
+
+.vt-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  min-height: 16px;
+}
+
+.vt-status { color: var(--lvl-text); }
+.vt-delta { color: var(--text-muted); font-weight: 500; }
+
+/* Week consistency strip */
+.week-card {
+  margin-bottom: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: 14px 18px 12px;
+}
+
+.week-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.week-head h2 {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.week-streak {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--primary-dark);
+}
+
+.week-days {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.week-days li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.wd-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px dashed var(--gray-300);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wd-dot svg { width: 16px; height: 16px; fill: #fff; }
+
+.week-days li.logged .wd-dot {
+  background: var(--primary);
+  border: 2px solid var(--primary);
+}
+
+.week-days li.today .wd-dot:not(:has(svg)) { border-style: solid; border-color: var(--primary); }
+
+.wd-letter {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.week-days li.today .wd-letter { color: var(--primary-dark); }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
 
 .vt-value {
   font-size: var(--text-xl);
@@ -402,6 +513,11 @@
 }
 
 .fab-menu-item {
+  width: 100%;
+  border: none;
+  background: none;
+  text-align: left;
+  font: inherit;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -507,4 +623,141 @@
     width: 56px;
     height: 56px;
   }
+}
+
+/* Retention: today's nudge, milestones, insights */
+.nudge-card {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+  color: #fff;
+  box-shadow: var(--shadow-brand);
+}
+
+.nudge-card.done {
+  background: var(--tint-primary);
+  color: var(--primary-dark);
+  box-shadow: none;
+  border: 1px solid var(--tint-primary-strong);
+}
+
+.nudge-text { flex: 1; min-width: 0; }
+.nudge-text h2 { font-size: var(--text-base); font-weight: 700; margin-bottom: 2px; }
+.nudge-text p { font-size: var(--text-sm); opacity: 0.92; line-height: var(--leading-snug); }
+
+.nudge-btn {
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 0 16px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--primary-dark);
+  font-weight: 700;
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+
+.week-milestone {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--gray-100);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--primary-dark);
+  text-align: center;
+}
+
+.insight-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.insight-list li {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: var(--leading-snug);
+  padding-left: 12px;
+  border-left: 3px solid var(--tint-primary-strong);
+}
+
+@media (max-width: 380px) {
+  .nudge-card { flex-direction: column; align-items: stretch; }
+}
+
+.insight-inline {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--gray-100);
+}
+
+.insight-inline h3 {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+
+/* ---------- Desktop: use the width instead of one narrow column ---------- */
+@media (min-width: 1025px) {
+  .dash-hero {
+    padding: 28px 0 56px;
+  }
+
+  .dash-hero > * {
+    max-width: 1080px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 32px;
+  }
+
+  .dash-body {
+    max-width: 1080px;
+    margin-top: -32px;
+    padding: 0 32px 40px;
+    display: grid;
+    grid-template-columns: minmax(0, 1.7fr) minmax(280px, 1fr);
+    grid-template-rows: auto auto auto 1fr;
+    grid-template-areas:
+      'nudge  nudge'
+      'vitals tasks'
+      'vitals week'
+      'vitals .';
+    gap: 16px;
+    align-items: start;
+  }
+
+  .dash-body > section { margin-bottom: 0; }
+  .area-nudge { grid-area: nudge; }
+  .area-vitals { grid-area: vitals; }
+  .area-tasks { grid-area: tasks; }
+  .area-week { grid-area: week; }
+
+  .vital-tiles { grid-template-columns: repeat(3, 1fr); }
+
+  /* White card so it stands apart from the teal hero instead of blending in */
+  .nudge-card:not(.done) {
+    background: var(--surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border-default);
+    border-left: 4px solid var(--primary);
+    box-shadow: var(--shadow-card);
+  }
+
+  .nudge-card:not(.done) .nudge-btn {
+    background: var(--primary);
+    color: #fff;
+    box-shadow: var(--shadow-brand);
+    padding: 0 22px;
+  }
+
+  .nudge-card:not(.done) .nudge-text p { color: var(--text-secondary); opacity: 1; }
 }
