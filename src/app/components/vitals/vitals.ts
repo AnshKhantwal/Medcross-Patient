@@ -57,6 +57,17 @@ export class VitalsComponent {
 
   private toast = inject(ToastService);
   isSubmitting = signal(false);
+  streak = signal(0);
+
+  encouragement = computed(() => {
+    const n = this.streak();
+    if (n >= 30) return 'A month of consistency. Remarkable.';
+    if (n >= 14) return 'Two weeks strong. Keep it going.';
+    if (n >= 7) return 'A full week. This is becoming a habit.';
+    if (n >= 3) return "You're building momentum.";
+    if (n === 2) return 'Two days running. Come back tomorrow!';
+    return 'Great start. Log again tomorrow to build a streak.';
+  });
 
   /** True once at least one measurement has been entered — gates the submit button. */
   get hasAnyValue(): boolean {
@@ -99,6 +110,7 @@ export class VitalsComponent {
       next: () => {
         this.isSubmitting.set(false);
         this.showModal.set(true);
+        this.loadStreak();
       },
       error: (err) => {
         this.isSubmitting.set(false);
@@ -106,6 +118,30 @@ export class VitalsComponent {
         this.toast.show(message, 'error');
       }
     });
+  }
+
+  private loadStreak(): void {
+    this.submissionHistoryService.getAllHistory().subscribe({
+      next: (items) => {
+        const logged = new Set(items.map((i) => i.date));
+        const d = new Date();
+        d.setHours(0, 0, 0, 0);
+        const iso = (x: Date) => `${x.getFullYear()}-${`${x.getMonth() + 1}`.padStart(2, '0')}-${`${x.getDate()}`.padStart(2, '0')}`;
+        if (!logged.has(iso(d))) d.setDate(d.getDate() - 1);
+        let n = 0;
+        while (logged.has(iso(d))) {
+          n++;
+          d.setDate(d.getDate() - 1);
+        }
+        this.streak.set(n);
+      },
+      error: () => this.streak.set(0)
+    });
+  }
+
+  logTasksNext(): void {
+    this.showModal.set(false);
+    this.router.navigate(['/tasks']);
   }
 
   closeModal(): void {

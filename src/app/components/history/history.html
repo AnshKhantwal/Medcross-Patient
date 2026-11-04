@@ -9,10 +9,86 @@
       <p class="history-subtitle">Review the vitals and tasks you've logged.</p>
     </div>
 
+    @if (!isLoading() && historyItems().length > 0) {
+      <div class="view-switch" role="tablist" aria-label="History view">
+        <button type="button" role="tab" [attr.aria-selected]="view() === 'trends'" [class.active]="view() === 'trends'" (click)="setView('trends')">Trends</button>
+        <button type="button" role="tab" [attr.aria-selected]="view() === 'log'" [class.active]="view() === 'log'" (click)="setView('log')">Log</button>
+      </div>
+    }
+
     @if (isLoading()) {
-      <section class="history-card empty-container" aria-busy="true" aria-label="Loading history">
-        <span class="loading-spinner" aria-hidden="true"></span>
-        <p class="empty-state">Loading your history…</p>
+      <section class="history-skeleton" aria-busy="true" aria-label="Loading history">
+        <p class="sr-only">Loading your history…</p>
+        <span class="sk" style="width: 180px; height: 44px; border-radius: 999px" aria-hidden="true"></span>
+        <span class="sk sk-card" style="height: 420px" aria-hidden="true"></span>
+      </section>
+    } @else if (historyItems().length > 0 && view() === 'trends') {
+      <section class="trend-card" aria-label="Vitals trends">
+        <div class="chip-row" role="tablist" aria-label="Measurement">
+          @for (m of metrics; track m.key) {
+            <button type="button" role="tab" class="metric-chip" [attr.aria-selected]="metricKey() === m.key" [class.active]="metricKey() === m.key" (click)="setMetric(m.key)">{{ m.label }}</button>
+          }
+        </div>
+
+        <div class="range-row" role="tablist" aria-label="Time range">
+          @for (d of ranges; track d) {
+            <button type="button" role="tab" class="range-btn" [attr.aria-selected]="rangeDays() === d" [class.active]="rangeDays() === d" (click)="setRange(d)">{{ d }} days</button>
+          }
+        </div>
+
+        @if (chart(); as c) {
+          @if (c.stats.count < 2) {
+            <div class="single-reading">
+              <span class="sr-label">Only one reading in this period</span>
+              <strong>{{ c.stats.latest }}<small>{{ currentMetric().unit }}</small></strong>
+              <span class="sr-date">Recorded {{ c.stats.latestDate }}</span>
+              <p>Record this again on another day and your trend will appear here.</p>
+            </div>
+          } @else {
+          <div class="trend-stats">
+            <div><span>Latest</span><strong>{{ c.stats.latest }}<small>{{ currentMetric().unit }}</small></strong></div>
+            <div><span>Average</span><strong>{{ c.stats.avg }}</strong></div>
+            <div><span>Lowest</span><strong>{{ c.stats.min }}</strong></div>
+            <div><span>Highest</span><strong>{{ c.stats.max }}</strong></div>
+          </div>
+
+          <svg class="trend-svg" [attr.viewBox]="'0 0 ' + c.w + ' ' + c.h" role="img"
+               [attr.aria-label]="currentMetric().label + ' over the last ' + rangeDays() + ' days, ' + c.stats.count + ' readings. Latest ' + c.stats.latest + ' ' + currentMetric().unit + ', average ' + c.stats.avg + '.'">
+            @if (c.band) {
+              <rect class="band" [attr.x]="c.band.x" [attr.y]="c.band.y" [attr.width]="c.band.w" [attr.height]="c.band.h" rx="4" />
+            }
+            @for (tk of c.yTicks; track tk.y) {
+              <line class="grid" [attr.x1]="c.left" [attr.x2]="c.right" [attr.y1]="tk.y" [attr.y2]="tk.y" />
+              <text class="axis" [attr.x]="c.left - 6" [attr.y]="tk.y + 3" text-anchor="end">{{ tk.label }}</text>
+            }
+            @for (xl of c.xLabels; track xl.x) {
+              <text class="axis" [attr.x]="xl.x" [attr.y]="c.bottom + 16" [attr.text-anchor]="xl.anchor">{{ xl.label }}</text>
+            }
+            @for (ln of c.lines; track $index) {
+              <g [class.second]="$index === 1">
+                <polyline class="series" [attr.points]="ln.points" />
+                @for (p of ln.dots; track p.x) {
+                  <circle class="dot" [attr.cx]="p.x" [attr.cy]="p.y" r="3.5"><title>{{ p.tip }}</title></circle>
+                }
+              </g>
+            }
+          </svg>
+
+          <p class="trend-legend">
+            @if (currentMetric().band; as b) {
+              <span>Shaded: usual range ({{ b[0] }}–{{ b[1] }} {{ currentMetric().unit }}{{ currentMetric().key === 'bp' ? ' systolic' : '' }})</span>
+            }
+            @if (currentMetric().key === 'bp') {
+              <span class="legend-key"><i class="k1"></i>Systolic<i class="k2"></i>Diastolic</span>
+            }
+          </p>
+          @if (c.stats.count < 3) {
+            <p class="trend-hint">Log a few more days for a clearer trend.</p>
+          }
+          }
+        } @else {
+          <p class="empty-state trend-empty">No {{ currentMetric().label.toLowerCase() }} readings in the last {{ rangeDays() }} days.</p>
+        }
       </section>
     } @else if (historyItems().length > 0) {
       <section class="section-block">
@@ -77,9 +153,12 @@
         }
       </section>
     } @else {
-      <section class="history-card empty-container" aria-label="No history available">
+      <section class="history-card empty-container empty-rich" aria-label="No history available">
+        <span class="empty-art" aria-hidden="true">
+          <svg class="ico" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg>
+        </span>
         <h3>No history yet</h3>
-        <p class="empty-state">Submit your vitals or tasks and your date cards will appear here.</p>
+        <p class="empty-state">Record your first vitals or tasks and your trends and date cards will appear here.</p>
       </section>
     }
   }

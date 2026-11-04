@@ -1,5 +1,5 @@
-/* MedCross Patient Portal - Global Styles */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+/* MedCross Patient Portal - Global Styles
+   Inter is loaded from index.html (a CSS @import would block rendering). */
 
 * {
   margin: 0;
@@ -17,36 +17,39 @@ html, body {
 }
 
 :root {
-  /* Calm, trust-building healthcare palette */
-  --primary: #0d9488;
-  --primary-rgb: 13, 148, 136;
-  --primary-dark: #0f766e;
-  --primary-light: #2dd4bf;
-  --secondary: #0ea5e9;
-  --secondary-rgb: 14, 165, 233;
-  --accent: #06b6d4;
-  --success: #16a34a;
-  --success-rgb: 22, 163, 74;
-  --warning: #d97706;
-  --warning-rgb: 217, 119, 6;
-  --danger: #dc2626;
-  --danger-rgb: 220, 38, 38;
-  --dark: #0f172a;
-  --gray-900: #111827;
-  --gray-800: #1f2937;
-  --gray-700: #374151;
-  --gray-600: #4b5563;
-  --gray-500: #6b7280;
-  --gray-400: #9ca3af;
-  --gray-300: #d1d5db;
-  --gray-200: #e5e7eb;
-  --gray-100: #f3f4f6;
-  --gray-50: #f9fafb;
+  /* Deep ocean-teal brand with a calm blue accent. Neutrals lean slightly cool
+     (slate) so surfaces, borders and text sit in the same family as the brand. */
+  --primary: #0e7c86;
+  --primary-rgb: 14, 124, 134;
+  --primary-dark: #0a5963;
+  --primary-light: #35b8bd;
+  --brand-deep: #0b4a63;
+  --secondary: #3b82c4;
+  --secondary-rgb: 59, 130, 196;
+  --accent: #35b8bd;
+  --success: #15803d;
+  --success-rgb: 21, 128, 61;
+  --warning: #c2680a;
+  --warning-rgb: 194, 104, 10;
+  --danger: #d12c2c;
+  --danger-rgb: 209, 44, 44;
+  --dark: #0f1c26;
+  --gray-900: #0f1c26;
+  --gray-800: #1d2b36;
+  --gray-700: #34444f;
+  --gray-600: #4d5f6b;
+  --gray-500: #66798a;
+  --gray-400: #94a3b0;
+  --gray-300: #cbd5dc;
+  --gray-200: #e3eaee;
+  --gray-100: #eef3f6;
+  --gray-50: #f6f9fa;
 
   /* Shared surface tokens */
-  --radius-sm: 10px;
-  --radius-md: 16px;
+  --radius-sm: 12px;
+  --radius-md: 18px;
   --radius-lg: 24px;
+  --page-bg: #f1f6f8;
   /* Layered elevation — a contact shadow plus ambient spread reads as a real
      surface where a single flat drop reads as a sticker. */
   --shadow-soft:
@@ -117,7 +120,10 @@ html, body {
 }
 
 body {
-  background: var(--gray-100);
+  background: var(--page-bg);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
   min-height: 100vh;
   min-height: 100dvh;
   overflow-x: clip;
@@ -129,6 +135,51 @@ body {
   min-height: 100dvh;
   position: relative;
   overflow-x: clip;
+}
+
+h1, h2, h3 {
+  letter-spacing: -0.015em;
+}
+
+/* One icon language across the app: 24px grid, 1.75 rounded stroke. */
+.ico {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Numbers line up in columns and don't jitter as values change */
+body {
+  font-feature-settings: 'cv11', 'ss03';
+}
+
+.tnum, .vt-value, .trend-stats strong, .progress-head strong, .stat-value {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Tactile press feedback on every control */
+button:not(:disabled), a.nav-item, a.tab-item {
+  transition-property: background-color, color, border-color, box-shadow, transform, filter, opacity;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
+}
+
+button:not(:disabled):active {
+  transform: scale(0.98);
+}
+
+/* Every routed page eases in, so moving between tabs feels like one app
+   instead of a hard swap. */
+.route-content > * {
+  display: block;
+  animation: pageIn 0.28s ease-out both;
+}
+
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
 }
 
 /* Focus visibility for accessibility across the app */
@@ -173,4 +224,41 @@ button.back-link {
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
   }
+}
+
+/* Skeleton loading: shimmering placeholders that hold the layout still while
+   data loads, instead of a spinner on an empty page. */
+.sk {
+  display: block;
+  border-radius: 10px;
+  background: linear-gradient(100deg, var(--gray-100) 30%, var(--gray-50) 50%, var(--gray-100) 70%);
+  background-size: 200% 100%;
+  animation: skShimmer 1.4s ease-in-out infinite;
+}
+
+.sk.sk-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-default);
+}
+
+.sk.sk-light {
+  background: linear-gradient(100deg, rgba(255, 255, 255, 0.14) 30%, rgba(255, 255, 255, 0.26) 50%, rgba(255, 255, 255, 0.14) 70%);
+  background-size: 200% 100%;
+}
+
+@keyframes skShimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }

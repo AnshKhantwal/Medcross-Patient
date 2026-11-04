@@ -18,13 +18,6 @@ interface VitalTile {
   spark: string;
 }
 
-interface WeekDay {
-  letter: string;
-  iso: string;
-  logged: boolean;
-  today: boolean;
-}
-
 @Component({
   selector: 'app-dashboard',
   imports: [],
@@ -135,24 +128,6 @@ export class DashboardComponent {
   /** Count of tiles outside the usual range — drives the summary line above the tiles. */
   attentionCount = computed(() => this.vitalTiles().filter((t) => t.level === 'watch' || t.level === 'alert').length);
 
-  /** Last 7 days (oldest → today) with whether anything was logged — a consistency cue. */
-  weekDays = computed<WeekDay[]>(() => {
-    const logged = new Set(this.history().map((i) => i.date));
-    const days: WeekDay[] = [];
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
-      const iso = this.toIsoDate(d);
-      days.push({
-        letter: d.toLocaleDateString('en-US', { weekday: 'narrow' }),
-        iso,
-        logged: logged.has(iso),
-        today: i === 0
-      });
-    }
-    return days;
-  });
-
   /** Consecutive days logged, ending today (or yesterday, so the streak isn't lost before you've logged today). */
   streak = computed(() => {
     const logged = new Set(this.history().map((i) => i.date));
@@ -169,7 +144,12 @@ export class DashboardComponent {
   /** Single most useful next step for today — the reason to open the app. */
   nudge = computed(() => {
     if (!this.loggedVitalsToday()) {
-      return { title: "Log today's vitals", text: 'Takes under a minute and keeps your trends accurate.', action: 'vitals' as const, cta: 'Record vitals' };
+      // Don't lose it — a streak at risk is a stronger reason to log than accuracy alone.
+      const atRisk = this.streak() >= 2 && !this.todaysItem();
+      const text = atRisk
+        ? `Log today to keep your ${this.streak()}-day streak going.`
+        : 'Takes under a minute and keeps your trends accurate.';
+      return { title: "Log today's vitals", text, action: 'vitals' as const, cta: 'Record vitals' };
     }
     if (!this.loggedTasksToday()) {
       return { title: 'Vitals done — one more', text: "Check in on today's tasks to complete your day.", action: 'tasks' as const, cta: 'Log tasks' };
@@ -177,36 +157,40 @@ export class DashboardComponent {
     return { title: "You're all set for today", text: 'Everything is logged. See you tomorrow to keep your streak going.', action: null, cta: '' };
   });
 
-  /** Short celebratory line for streaks and total check-ins. */
+  /** Short celebratory line, only once there's a real streak (3+ days) to celebrate. */
   milestone = computed(() => {
     const n = this.streak();
-    const total = this.history().length;
     if (n >= 30) return `${n} days in a row — an amazing habit.`;
     if (n >= 14) return `${n} days in a row — two weeks of consistency.`;
     if (n >= 7) return `${n} days in a row — a full week!`;
     if (n >= 3) return `${n} days in a row — keep it going.`;
-    if (total >= 10) return `${total} check-ins logged so far.`;
     return '';
   });
 
   /** Plain-language comparisons of the latest reading to the patient's own recent average. Descriptive only — not medical advice. */
   insights = computed<string[]>(() => {
     const metrics: { name: string; unit: string; pick: (v: VitalData) => number | null | undefined }[] = [
-      { name: 'Systolic blood pressure', unit: 'points', pick: (v) => v.bpSystolic },
+      { name: 'Systolic BP', unit: 'points', pick: (v) => v.bpSystolic },
       { name: 'Pulse', unit: 'bpm', pick: (v) => v.pulse },
       { name: 'Weight', unit: 'kg', pick: (v) => v.weight }
     ];
+    const latest = this.latestVitalsItem()?.vitals?.vitals;
+    if (!latest) return [];
     const out: string[] = [];
     for (const m of metrics) {
+      // Only compare metrics present in the latest reading, so the line always matches the tile shown above.
+      const current = m.pick(latest);
+      if (current == null) continue;
       const vals = this.vitalsHistory().map((i) => m.pick(i.vitals!.vitals)).filter((n): n is number => n != null);
       if (vals.length < 3) continue;
       const prev = vals.slice(1, 8);
-      const avg = prev.reduce((a, b) => a + b, 0) / prev.length;
-      const diff = Math.round((vals[0] - avg) * 10) / 10;
+      const avg = Math.round((prev.reduce((a, b) => a + b, 0) / prev.length) * 10) / 10;
+      const diff = Math.round((current - avg) * 10) / 10;
+      const basis = `your average of ${avg} over the last ${prev.length} readings`;
       if (Math.abs(diff) < Math.max(1, avg * 0.02)) {
-        out.push(`${m.name} is steady.`);
+        out.push(`${m.name} (${current}) is in line with ${basis}.`);
       } else {
-        out.push(`${m.name} is ${Math.abs(diff)} ${m.unit} ${diff < 0 ? 'lower' : 'higher'}.`);
+        out.push(`${m.name} (${current}) is ${Math.abs(diff)} ${m.unit} ${diff < 0 ? 'below' : 'above'} ${basis}.`);
       }
     }
     return out.slice(0, 2);
@@ -244,7 +228,7 @@ export class DashboardComponent {
     if (readings.length < 2) return { delta: '', spark: '' };
 
     const diff = Math.round((readings[readings.length - 1] - readings[readings.length - 2]) * 10) / 10;
-    const delta = diff === 0 ? 'No change' : `${diff > 0 ? '+' : ''}${diff}`;
+    const delta = diff === 0 ? 'No change' : `${diff > 0 ? '+' : ''}${diff} vs last`;
 
     const min = Math.min(...readings);
     const range = Math.max(...readings) - min || 1;

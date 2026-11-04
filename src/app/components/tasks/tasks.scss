@@ -777,3 +777,202 @@
     padding-bottom: calc(var(--tab-bar-clearance) + 12px);
   }
 }
+
+/* =====================================================================
+   Design refresh — shared page shell, one card per task, bigger targets
+   ===================================================================== */
+.tasks-content {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px 24px 48px;
+}
+
+.tasks-header { margin-bottom: 20px; }
+.tasks-top-row { margin-bottom: 16px; }
+
+.back-link {
+  min-height: 40px;
+  margin-left: -10px;
+  padding: 0 14px 0 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  font-family: inherit;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.back-link:hover {
+  background: var(--tint-primary);
+  color: var(--primary-dark);
+}
+
+.back-link.standalone { margin: 12px 0 0 12px; }
+
+.selected-date-badge {
+  min-height: 40px;
+  padding: 0 6px 0 14px;
+  background: var(--surface);
+  border: 1px solid var(--border-default);
+  box-shadow: var(--shadow-soft);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+}
+
+.edit-date-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  color: var(--primary);
+}
+
+.tasks-title {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.tasks-subtitle { font-size: var(--text-base); margin-top: 2px; }
+
+/* Progress summary */
+.tasks-progress-card {
+  padding: 18px;
+  margin-bottom: 20px;
+  border-color: var(--border-default);
+  border-radius: var(--radius-md);
+}
+
+.progress-head h3 { font-size: var(--text-base); }
+.progress-head p { font-size: var(--text-sm); }
+.progress-head strong { font-size: var(--text-2xl); letter-spacing: -0.02em; }
+.progress-track { height: 10px; margin-top: 6px; }
+.status-chips { margin-top: 12px; gap: 8px; }
+.status-chip { font-size: var(--text-xs); padding: 5px 11px; }
+
+.quick-actions { margin-top: 14px; gap: 8px; }
+
+.quick-btn {
+  min-height: 44px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  padding: 8px 6px;
+}
+
+/* Category: a quiet label over its tasks — no box around the boxes */
+.tasks-form { gap: 24px; }
+
+.task-category {
+  padding: 0;
+  background: transparent;
+  border: 0;
+}
+
+.category-title {
+  margin: 0 0 10px 4px;
+  padding: 0;
+  border: 0;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.task-list { gap: 10px; }
+
+.task-item {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+  padding: 16px;
+  border-color: var(--border-default);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+}
+
+.task-info { gap: 12px; }
+
+.task-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+}
+
+.task-icon svg { width: 22px; height: 22px; }
+
+.task-name { font-size: var(--text-base); }
+.task-status-text { font-size: var(--text-sm); }
+
+/* A three-way segmented control spanning the card: big, even targets */
+.task-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.radio-option {
+  justify-content: center;
+  min-height: 46px;
+  padding: 0 8px;
+  gap: 7px;
+  border-radius: var(--radius-sm);
+  background: var(--gray-50);
+  border: 1.5px solid transparent;
+}
+
+.radio-label { font-size: var(--text-sm); }
+.radio-circle { width: 18px; height: 18px; }
+
+.radio-option.complete.selected { background: rgba(var(--success-rgb), 0.12); border-color: var(--success); }
+.radio-option.partial.selected { background: rgba(var(--warning-rgb), 0.12); border-color: var(--warning); }
+.radio-option.none.selected { background: rgba(var(--danger-rgb), 0.1); border-color: var(--danger); }
+.radio-option.partial.selected .radio-label { color: #92400e; }
+
+.submit-section { margin-top: 4px; padding-top: 0; border-top: 0; }
+
+.submit-btn {
+  width: 100%;
+  min-height: 54px;
+  padding: 0 24px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-base);
+}
+
+@media (max-width: 1024px) {
+  .tasks-content { padding: 16px 16px calc(var(--tab-bar-clearance) + 24px); }
+
+  .submit-section {
+    position: sticky;
+    bottom: calc(var(--tab-bar-clearance) + 8px);
+    z-index: 5;
+    margin: 0 -16px;
+    padding: 12px 16px 4px;
+    background: linear-gradient(to top, var(--page-bg) 70%, transparent);
+  }
+}
+
+@media (max-width: 576px) {
+  .tasks-title { font-size: 1.5rem; }
+  .selected-date-badge { font-size: var(--text-xs); }
+  .quick-btn { font-size: var(--text-xs); }
+  .radio-option { gap: 5px; padding: 0 4px; }
+  .radio-circle { width: 14px; height: 14px; }
+}
+
+@media (min-width: 640px) {
+  /* Room to put the name and the control on one line */
+  .task-item { flex-direction: row; align-items: center; justify-content: space-between; }
+  .task-options { width: 320px; flex-shrink: 0; }
+}
+
+.submit-btn:disabled {
+  opacity: 1;
+  background: var(--gray-200);
+  color: var(--gray-500);
+  box-shadow: none;
+}
+
+.submit-btn:disabled svg { fill: var(--gray-500); }
+
+.task-icon svg.ico { width: 22px; height: 22px; fill: none; stroke: var(--primary); }

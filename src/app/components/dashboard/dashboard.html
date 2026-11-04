@@ -1,8 +1,17 @@
 <div class="dashboard-content">
   @if (isLoading()) {
-    <div class="dash-loading" aria-busy="true">
-      <span class="loading-spinner" aria-hidden="true"></span>
-      <p>Loading your dashboard…</p>
+    <div class="dash-skeleton" aria-busy="true">
+      <p class="sr-only">Loading your dashboard…</p>
+      <div class="sk-hero" aria-hidden="true">
+        <span class="sk sk-light" style="width: 38%; height: 14px"></span>
+        <span class="sk sk-light" style="width: 58%; height: 28px"></span>
+        <span class="sk sk-light" style="width: 30%; height: 12px"></span>
+      </div>
+      <div class="sk-body" aria-hidden="true">
+        <span class="sk sk-card" style="height: 96px"></span>
+        <span class="sk sk-card" style="height: 340px"></span>
+        <span class="sk sk-card" style="height: 150px"></span>
+      </div>
     </div>
   } @else if (!hasData()) {
     <!-- First run — nothing logged yet -->
@@ -33,6 +42,12 @@
       <div class="nudge-text">
         <h2 id="nudge-h">{{ nudge().title }}</h2>
         <p>{{ nudge().text }}</p>
+        @if (milestone()) {
+          <p class="nudge-streak">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67z"/></svg>
+            {{ milestone() }}
+          </p>
+        }
       </div>
       @if (nudge().action) {
         <button type="button" class="nudge-btn" (click)="runNudge()">{{ nudge().cta }}</button>
@@ -42,7 +57,7 @@
     <section class="dash-card area-vitals" aria-labelledby="dash-vitals-h">
       <div class="dash-card-head">
         <span class="dash-card-ico">
-          <svg viewBox="0 0 24 24"><path d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3C14.8 12 16.8 13 19 13v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1L6 8.3V13h2V9.6l1.8-.7z"/></svg>
+          <svg class="ico" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/></svg>
         </span>
         <h2 id="dash-vitals-h">Latest vitals</h2>
         @if (latestVitalsDate()) {
@@ -61,6 +76,9 @@
         <div class="vital-tiles">
           @for (tile of vitalTiles(); track tile.label) {
             <div class="vital-tile" [class]="'lvl-' + tile.level">
+              @if (tile.spark) {
+                <svg class="vt-spark" viewBox="0 0 60 18" preserveAspectRatio="none" aria-hidden="true"><polyline [attr.points]="tile.spark"/></svg>
+              }
               <span class="vt-label">{{ tile.label }}</span>
               <span class="vt-value">{{ tile.value }}<small>{{ tile.unit }}</small></span>
               <span class="vt-foot">
@@ -68,7 +86,7 @@
                   <span class="vt-status">{{ tile.status }}</span>
                 }
                 @if (tile.delta) {
-                  <span class="vt-delta" [attr.aria-label]="'Change since last reading: ' + tile.delta">{{ tile.delta }}</span>
+                  <span class="vt-delta" [attr.aria-label]="'Change since previous reading: ' + tile.delta">{{ tile.delta }}</span>
                 }
               </span>
             </div>
@@ -94,7 +112,7 @@
     <section class="dash-card area-tasks" aria-labelledby="dash-tasks-h">
       <div class="dash-card-head">
         <span class="dash-card-ico">
-          <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>
+          <svg class="ico" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>
         </span>
         <h2 id="dash-tasks-h">Today's tasks</h2>
         @if (loggedTasksToday()) {
@@ -103,46 +121,22 @@
       </div>
 
       @if (loggedTasksToday()) {
-        <div class="task-row">
-          <span class="tp-ring" [style.background]="'conic-gradient(var(--primary) ' + taskStats().pct + '%, var(--gray-100) 0)'">
-            <span class="tp-ring-num">{{ taskStats().pct }}%</span>
-          </span>
-          <div class="tp-chips">
-            <span class="tp-chip complete">{{ taskStats().complete }} complete</span>
-            <span class="tp-chip partial">{{ taskStats().partial }} partial</span>
-            <span class="tp-chip none">{{ taskStats().none }} none</span>
-          </div>
+        <p class="tp-headline"><strong>{{ taskStats().complete }} of {{ taskStats().total }}</strong> tasks complete</p>
+        <div class="tp-bar" role="img"
+             [attr.aria-label]="taskStats().complete + ' complete, ' + taskStats().partial + ' partial, ' + taskStats().none + ' not done'">
+          @if (taskStats().complete) { <span class="seg complete" [style.flex-grow]="taskStats().complete"></span> }
+          @if (taskStats().partial) { <span class="seg partial" [style.flex-grow]="taskStats().partial"></span> }
+          @if (taskStats().none) { <span class="seg none" [style.flex-grow]="taskStats().none"></span> }
         </div>
+        <ul class="tp-legend" aria-hidden="true">
+          <li class="complete" [class.zero]="!taskStats().complete">{{ taskStats().complete }} complete</li>
+          <li class="partial" [class.zero]="!taskStats().partial">{{ taskStats().partial }} partial</li>
+          <li class="none" [class.zero]="!taskStats().none">{{ taskStats().none }} not done</li>
+        </ul>
         <button type="button" class="dash-link" (click)="goToTasks()">Update today's tasks</button>
       } @else {
         <p class="dash-empty">You haven't logged today's tasks yet.</p>
         <button type="button" class="dash-btn" (click)="goToTasks()">Log tasks</button>
-      }
-    </section>
-
-
-    <section class="week-card area-week" aria-label="Your last 7 days">
-      <div class="week-head">
-        <h2>This week</h2>
-        <span class="week-streak">
-          @if (streak() > 0) { {{ streak() }}-day streak } @else { Start a streak today }
-        </span>
-      </div>
-      <ul class="week-days">
-        @for (d of weekDays(); track d.iso) {
-          <li [class.logged]="d.logged" [class.today]="d.today">
-            <span class="wd-dot">
-              @if (d.logged) {
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-              }
-            </span>
-            <span class="wd-letter">{{ d.letter }}</span>
-            <span class="sr-only">{{ d.logged ? 'logged' : 'not logged' }}{{ d.today ? ', today' : '' }}</span>
-          </li>
-        }
-      </ul>
-      @if (milestone()) {
-        <p class="week-milestone">{{ milestone() }}</p>
       }
     </section>
 

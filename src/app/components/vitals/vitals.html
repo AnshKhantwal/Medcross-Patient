@@ -35,53 +35,11 @@
 
   <form class="vitals-form" (ngSubmit)="onSubmit()">
     <div class="vitals-grid">
-      <!-- Weight -->
-      <div class="vital-field">
-        <label class="vital-label" for="weight">
-          <span class="vital-label-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 3a4 4 0 014 4c0 .73-.19 1.41-.53 2H18c.55 0 1 .45 1 1v10c0 .55-.45 1-1 1H6c-.55 0-1-.45-1-1V10c0-.55.45-1 1-1h2.53c-.34-.59-.53-1.27-.53-2a4 4 0 014-4z"/></svg>
-          </span>
-          <span class="vital-label-text">Weight</span>
-        </label>
-        <div class="vital-inputs">
-          <div class="vital-input-group">
-            <input id="weight" type="number" class="vital-input" placeholder="70" min="0" step="0.1"
-                   inputmode="decimal" enterkeyhint="next"
-                   [(ngModel)]="vitals.weight" name="weight">
-          </div>
-          <span class="vital-unit">kg</span>
-        </div>
-        <p class="vital-hint">Enter to one decimal place, e.g. 70.5</p>
-      </div>
-
-      <!-- Temperature -->
-      <div class="vital-field">
-        <label class="vital-label" for="temperature">
-          <span class="vital-label-icon">
-            <svg viewBox="0 0 24 24"><path d="M15 13V5a3 3 0 00-6 0v8a5 5 0 106 0zm-3 6a3 3 0 01-3-3c0-1.08.58-2.03 1.44-2.56L11 13V5a1 1 0 012 0v8l.56.44A2.994 2.994 0 0115 16a3 3 0 01-3 3z"/></svg>
-          </span>
-          <span class="vital-label-text">Temperature</span>
-        </label>
-        <div class="vital-inputs">
-          <div class="vital-input-group">
-            <input id="temperature" type="number" class="vital-input" placeholder="98.6" min="90" max="110" step="0.1"
-                   inputmode="decimal" enterkeyhint="next"
-                   [(ngModel)]="vitals.temperature" name="temperature">
-          </div>
-          <span class="vital-unit">°F</span>
-        </div>
-        @if (outOfRange(vitals.temperature, 95, 104)) {
-          <p class="vital-flag">That's outside the usual range (95–104 °F). Double-check the reading.</p>
-        } @else {
-          <p class="vital-hint">Normal is around 97–99 °F</p>
-        }
-      </div>
-
       <!-- Blood Pressure -->
-      <div class="vital-field full-width-on-mobile">
+      <div class="vital-field full-width">
         <span class="vital-label" id="bp-label">
           <span class="vital-label-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            <svg class="ico" viewBox="0 0 24 24"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>
           </span>
           <span class="vital-label-text">Blood Pressure</span>
         </span>
@@ -106,7 +64,7 @@
       <div class="vital-field">
         <label class="vital-label" for="pulse">
           <span class="vital-label-icon">
-            <svg viewBox="0 0 24 24"><path d="M3 12h4l2-6 4 12 2-6h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg class="ico" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
           </span>
           <span class="vital-label-text">Pulse</span>
         </label>
@@ -121,30 +79,11 @@
         <p class="vital-hint">Resting rate is usually 60–100 bpm</p>
       </div>
 
-      <!-- Respiratory Rate -->
-      <div class="vital-field">
-        <label class="vital-label" for="respiratoryRate">
-          <span class="vital-label-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 3v9m0 0c0 3-2 5-5 5-2 0-3-1-3-3 0-3 2-7 4-8m4 6c0 3 2 5 5 5 2 0 3-1 3-3 0-3-2-7-4-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </span>
-          <span class="vital-label-text">Respiratory Rate</span>
-        </label>
-        <div class="vital-inputs">
-          <div class="vital-input-group">
-            <input id="respiratoryRate" type="number" class="vital-input" placeholder="16" min="8" max="40"
-                   inputmode="numeric" enterkeyhint="next"
-                   [(ngModel)]="vitals.respiratoryRate" name="respiratoryRate">
-          </div>
-          <span class="vital-unit">breaths/min</span>
-        </div>
-        <p class="vital-hint">Typically 12–20 breaths per minute</p>
-      </div>
-
       <!-- SpO2 -->
-      <div class="vital-field full-width">
+      <div class="vital-field">
         <label class="vital-label" for="spo2">
           <span class="vital-label-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 2.7S5 10 5 14.5a7 7 0 0014 0C19 10 12 2.7 12 2.7z"/></svg>
+            <svg class="ico" viewBox="0 0 24 24"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>
           </span>
           <span class="vital-label-text">Oxygen (SpO<sub>2</sub>)</span>
         </label>
@@ -163,11 +102,72 @@
         }
       </div>
 
+      <!-- Temperature -->
+      <div class="vital-field">
+        <label class="vital-label" for="temperature">
+          <span class="vital-label-icon">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/></svg>
+          </span>
+          <span class="vital-label-text">Temperature</span>
+        </label>
+        <div class="vital-inputs">
+          <div class="vital-input-group">
+            <input id="temperature" type="number" class="vital-input" placeholder="98.6" min="90" max="110" step="0.1"
+                   inputmode="decimal" enterkeyhint="next"
+                   [(ngModel)]="vitals.temperature" name="temperature">
+          </div>
+          <span class="vital-unit">°F</span>
+        </div>
+        @if (outOfRange(vitals.temperature, 95, 104)) {
+          <p class="vital-flag">That's outside the usual range (95–104 °F). Double-check the reading.</p>
+        } @else {
+          <p class="vital-hint">Normal is around 97–99 °F</p>
+        }
+      </div>
+
+      <!-- Respiratory Rate -->
+      <div class="vital-field">
+        <label class="vital-label" for="respiratoryRate">
+          <span class="vital-label-icon">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg>
+          </span>
+          <span class="vital-label-text">Respiratory Rate</span>
+        </label>
+        <div class="vital-inputs">
+          <div class="vital-input-group">
+            <input id="respiratoryRate" type="number" class="vital-input" placeholder="16" min="8" max="40"
+                   inputmode="numeric" enterkeyhint="next"
+                   [(ngModel)]="vitals.respiratoryRate" name="respiratoryRate">
+          </div>
+          <span class="vital-unit">breaths/min</span>
+        </div>
+        <p class="vital-hint">Typically 12–20 breaths per minute</p>
+      </div>
+
+      <!-- Weight -->
+      <div class="vital-field full-width">
+        <label class="vital-label" for="weight">
+          <span class="vital-label-icon">
+            <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="5" r="3"/><path d="M6.5 8a2 2 0 0 0-1.905 1.46L2.1 18.5A2 2 0 0 0 4 21h16a2 2 0 0 0 1.925-2.54L19.4 9.5A2 2 0 0 0 17.48 8Z"/></svg>
+          </span>
+          <span class="vital-label-text">Weight</span>
+        </label>
+        <div class="vital-inputs">
+          <div class="vital-input-group">
+            <input id="weight" type="number" class="vital-input" placeholder="70" min="0" step="0.1"
+                   inputmode="decimal" enterkeyhint="next"
+                   [(ngModel)]="vitals.weight" name="weight">
+          </div>
+          <span class="vital-unit">kg</span>
+        </div>
+        <p class="vital-hint">Enter to one decimal place, e.g. 70.5</p>
+      </div>
+
       <!-- Height -->
-      <div class="vital-field full-width-on-mobile">
+      <div class="vital-field full-width">
         <span class="vital-label" id="height-label">
           <span class="vital-label-icon">
-            <svg viewBox="0 0 24 24"><path d="M21 6H3a1 1 0 00-1 1v10a1 1 0 001 1h18a1 1 0 001-1V7a1 1 0 00-1-1zm-1 10h-2v-3h-2v3h-2v-2h-2v2h-2v-3H8v3H6v-2H4V8h16v8z"/></svg>
+            <svg class="ico" viewBox="0 0 24 24"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></svg>
           </span>
           <span class="vital-label-text">Height</span>
         </span>
@@ -215,10 +215,16 @@
         </div>
       </div>
       <h3 class="modal-title">Vitals recorded</h3>
-      <p class="modal-message">Your measurements for {{ formattedDate() }} have been saved. Nice work staying on top of it.</p>
-      <button class="modal-btn" (click)="closeModal()">
-        Back to Dashboard
-      </button>
+      <p class="modal-message">Your measurements for {{ formattedDate() }} have been saved.</p>
+      @if (streak() > 0) {
+        <div class="modal-streak">
+          <strong>{{ streak() }}</strong>
+          <span>{{ streak() === 1 ? 'day logged' : 'days in a row' }}</span>
+        </div>
+        <p class="modal-encourage">{{ encouragement() }}</p>
+      }
+      <button class="modal-btn" (click)="logTasksNext()">Next: log today's tasks</button>
+      <button type="button" class="modal-btn-secondary" (click)="closeModal()">Back to dashboard</button>
     </div>
   </div>
 }

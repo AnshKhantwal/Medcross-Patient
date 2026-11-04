@@ -642,3 +642,190 @@
     padding-bottom: calc(var(--tab-bar-clearance) + 12px);
   }
 }
+
+/* Less reading, more tapping on phones: hints add length without adding value */
+@media (max-width: 576px) {
+  .vital-hint { display: none; }
+}
+
+.modal-streak {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 10px 18px;
+  margin-bottom: 8px;
+  border-radius: 999px;
+  background: var(--tint-primary);
+  color: var(--primary-dark);
+}
+
+.modal-streak strong { font-size: var(--text-2xl); line-height: 1; }
+.modal-streak span { font-size: var(--text-sm); font-weight: 600; }
+
+.modal-encourage {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-5);
+}
+
+.modal-btn-secondary {
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px 24px;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.modal-btn-secondary:hover { background: var(--gray-100); }
+
+/* =====================================================================
+   Design refresh — shared page shell, flatter form, thumb-reach submit
+   (kept last so it wins over the earlier responsive blocks)
+   ===================================================================== */
+.vitals-content {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px 24px 48px;
+}
+
+.vitals-header { margin-bottom: 20px; }
+
+.vitals-top-row { margin-bottom: 16px; }
+
+.back-link {
+  min-height: 40px;
+  margin-left: -10px;
+  padding: 0 14px 0 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.back-link:hover {
+  background: var(--tint-primary);
+  color: var(--primary-dark);
+}
+
+.back-link.standalone { margin: 12px 0 0 12px; }
+
+.selected-date-badge {
+  min-height: 40px;
+  padding: 0 6px 0 14px;
+  background: var(--surface);
+  border: 1px solid var(--border-default);
+  box-shadow: var(--shadow-soft);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+}
+
+.edit-date-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  color: var(--primary);
+}
+
+.vitals-title {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.vitals-subtitle { font-size: var(--text-base); margin-top: 2px; }
+
+/* One layer of card instead of a white card full of grey cards */
+.vitals-form {
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.vitals-grid { gap: 14px; }
+
+.vital-field {
+  padding: 18px 18px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+}
+
+.vital-field:focus-within {
+  background: var(--surface);
+  border-color: var(--primary);
+  box-shadow: var(--ring-primary), var(--shadow-soft);
+}
+
+.vital-label-text { font-size: var(--text-base); }
+
+.vital-input {
+  min-height: 52px;
+  padding: 0 14px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  background: var(--gray-50);
+  border-color: transparent;
+}
+
+.vital-input:focus { background: var(--surface); }
+
+.vital-flag {
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(var(--warning-rgb), 0.1);
+}
+
+.submit-section {
+  margin-top: 20px;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.submit-btn {
+  width: 100%;
+  min-height: 54px;
+  padding: 0 24px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-base);
+}
+
+@media (max-width: 1024px) {
+  .vitals-content { padding: 16px 16px calc(var(--tab-bar-clearance) + 24px); }
+
+  /* Keep Submit in thumb reach above the tab bar while scrolling a long form */
+  .submit-section {
+    position: sticky;
+    bottom: calc(var(--tab-bar-clearance) + 8px);
+    z-index: 5;
+    margin: 20px -16px 0;
+    padding: 12px 16px 4px;
+    background: linear-gradient(to top, var(--page-bg) 70%, transparent);
+  }
+}
+
+@media (max-width: 576px) {
+  .vitals-grid { gap: 10px; }
+  .vital-field { padding: 14px 14px 12px; }
+  .vital-input { font-size: 1.0625rem; padding: 0 12px; }
+  .vitals-title { font-size: 1.5rem; }
+  .selected-date-badge { font-size: var(--text-xs); min-height: 40px; }
+}
+
+.submit-btn:disabled {
+  opacity: 1;
+  background: var(--gray-200);
+  color: var(--gray-500);
+  box-shadow: none;
+}
+
+.submit-btn:disabled svg { fill: var(--gray-500); }
+
+.vital-label-icon svg.ico { fill: none; stroke: var(--primary); }

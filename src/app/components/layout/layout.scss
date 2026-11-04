@@ -2,7 +2,7 @@
   display: flex;
   min-height: 100vh;
   min-height: 100dvh;
-  background: var(--gray-100);
+  background: var(--page-bg);
   overflow-x: clip;
   width: 100%;
 }
@@ -205,7 +205,7 @@
 
 .sidebar-nav {
   flex: 1;
-  padding: 25px 15px;
+  padding: var(--space-6) var(--space-4);
   overflow-y: auto;
 }
 
@@ -220,55 +220,70 @@
 }
 
 .nav-item {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: var(--space-4) var(--space-5);
+  min-height: 48px;
+  padding: 0 var(--space-4);
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all 0.2s ease;
-  margin-bottom: 6px;
+  transition: background 0.2s ease, color 0.2s ease;
+  margin-bottom: 4px;
   text-decoration: none;
 }
 
 .nav-item:hover {
-  background: var(--gray-100);
+  background: var(--gray-50);
 }
 
+/* Quiet tinted state with a brand edge — the selected page is clear without a
+   heavy solid block competing with the page content. */
 .nav-item.active {
+  background: var(--tint-primary);
+}
+
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
   background: var(--primary);
 }
 
 .nav-item.active svg {
-  fill: white;
+  fill: var(--primary);
 }
 
 .nav-item.active span {
-  color: white;
+  color: var(--primary-dark);
   font-weight: 600;
 }
 
 .nav-item svg {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   fill: var(--gray-500);
   transition: fill 0.2s ease;
   flex-shrink: 0;
 }
 
 .nav-item span {
-  font-size: var(--text-md);
+  font-size: var(--text-base);
   color: var(--text-secondary);
   font-weight: 500;
   transition: color 0.2s ease;
 }
 
-.nav-item:hover svg {
+.nav-item:not(.active):hover svg {
   fill: var(--primary);
 }
 
-.nav-item:hover span {
-  color: var(--primary);
+.nav-item:not(.active):hover span {
+  color: var(--text-primary);
 }
 
 .sidebar-footer {
@@ -308,6 +323,8 @@
 /* Main Content */
 .main-content {
   flex: 1;
+  /* Let wide children (scrollable chip rows, charts) shrink instead of widening the page */
+  min-width: 0;
   margin-left: 280px;
   min-height: 100vh;
   min-height: 100dvh;
@@ -318,6 +335,7 @@
 
 .route-content {
   flex: 1;
+  min-width: 0;
 }
 
 /* Mobile Header */
@@ -377,7 +395,7 @@
   right: 0;
   background: white;
   border-top: 1px solid var(--gray-200);
-  padding: 6px 4px;
+  padding: 6px 8px;
   padding-bottom: max(6px, var(--safe-bottom));
   z-index: 90;
   box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.06);
@@ -388,13 +406,23 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3px;
+  gap: 2px;
   flex: 1;
-  padding: 6px 2px;
+  min-height: 52px;
+  padding: 4px 2px;
   text-decoration: none;
   color: var(--gray-500);
-  border-radius: 12px;
+  border-radius: 14px;
   transition: color 0.2s ease;
+}
+
+/* The icon sits in a pill that fills when the tab is active, so the current
+   tab is readable at a glance and not by colour alone. */
+.tab-item svg {
+  box-sizing: content-box;
+  padding: 4px 16px;
+  border-radius: 999px;
+  transition: background 0.2s ease, fill 0.2s ease;
 }
 
 .tab-item svg {
@@ -410,7 +438,7 @@
 }
 
 .tab-item:active svg {
-  transform: scale(0.9);
+  background: var(--tint-primary);
 }
 
 .tab-item.active {
@@ -418,7 +446,7 @@
 }
 
 .tab-item.active svg {
-  transform: translateY(-1px);
+  background: var(--tint-primary-strong);
 }
 
 /* Responsive */
@@ -439,3 +467,129 @@
     display: flex;
   }
 }
+
+/* =====================================================================
+   Design refresh — light sidebar, stroke icons, user card
+   ===================================================================== */
+.sidebar {
+  background: var(--surface);
+  border-right: 1px solid var(--border-default);
+}
+
+.sidebar-header {
+  padding: var(--space-6) var(--space-5) var(--space-2);
+  background: transparent;
+}
+
+.sidebar-brand { margin-bottom: 0; gap: 12px; }
+
+.sidebar-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(145deg, var(--primary-light) 0%, var(--primary) 55%, var(--primary-dark) 100%);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.1), 0 6px 14px rgba(var(--primary-rgb), 0.3);
+}
+
+.sidebar-logo svg { width: 24px; height: 24px; fill: #fff; }
+
+.sidebar-brand-text {
+  color: var(--text-primary);
+  font-size: var(--text-xl);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.sidebar-nav { padding: var(--space-5) var(--space-3); }
+
+.nav-section-title {
+  padding: 0 var(--space-4);
+  margin-bottom: var(--space-2);
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+}
+
+.nav-item svg.ico,
+.tab-item svg.ico,
+.profile-menu-item svg.ico {
+  fill: none;
+  stroke: currentColor;
+}
+
+.nav-item { color: var(--gray-500); }
+.nav-item svg.ico { width: 20px; height: 20px; color: inherit; }
+.nav-item span { color: var(--gray-600); }
+
+.nav-item.active { color: var(--primary); }
+.nav-item.active svg.ico { fill: none; stroke: var(--primary); }
+.nav-item.active span { color: var(--primary-dark); }
+.nav-item:not(.active):hover { color: var(--primary); }
+.nav-item:not(.active):hover svg.ico { fill: none; }
+
+.sidebar-footer {
+  padding: var(--space-3);
+  padding-bottom: max(var(--space-3), var(--safe-bottom));
+  border-top: 1px solid var(--border-default);
+}
+
+.user-profile {
+  gap: 12px;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  transition: background 0.15s ease;
+}
+
+.user-profile:hover { background: var(--gray-50); }
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  background: var(--gray-100);
+  border: 2px solid var(--surface);
+  box-shadow: 0 0 0 1px var(--border-default);
+}
+
+.user-name {
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.user-role {
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+}
+
+.user-chevron {
+  width: 16px;
+  height: 16px;
+  color: var(--gray-400);
+  flex-shrink: 0;
+}
+
+/* The account menu now opens upward from the footer card */
+.sidebar .profile-menu {
+  top: auto;
+  bottom: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  border: 1px solid var(--border-default);
+}
+
+.profile-menu {
+  border-radius: var(--radius-md);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 12px 32px rgba(15, 23, 42, 0.14);
+}
+
+.profile-menu-item {
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.profile-menu-item svg.ico { width: 18px; height: 18px; color: var(--gray-500); }
+.profile-menu-item.logout-item svg.ico { color: var(--danger); }
+
+.tab-item svg.ico { width: 22px; height: 22px; }
+.tab-item.active svg.ico { stroke-width: 2.1; }
