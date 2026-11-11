@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  // Replace with the deployed patient-api origin before shipping.
-  apiBaseUrl: 'http://localhost:5160'
+  // Staging IIS deployment; update when the final prod path/domain is known.
+  apiBaseUrl: 'http://20.219.27.255/staging/patient-api'
 };
