@@ -46,11 +46,12 @@
       <span class="status-chip complete">Complete: {{ getStatusCount('complete') }}</span>
       <span class="status-chip partial">Partial: {{ getStatusCount('partial') }}</span>
       <span class="status-chip none">None: {{ getStatusCount('none') }}</span>
-    </div>
-    <div class="quick-actions">
-      <button type="button" class="quick-btn complete" (click)="setAllTasksStatus('complete')">Mark All Complete</button>
-      <button type="button" class="quick-btn partial" (click)="setAllTasksStatus('partial')">Mark All Partial</button>
-      <button type="button" class="quick-btn clear" (click)="clearAllStatuses()">Clear All</button>
+      @if (getAnsweredCount() > 0) {
+        <button type="button" class="clear-btn" (click)="clearAll()">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+          Clear
+        </button>
+      }
     </div>
   </div>
 

@@ -36,7 +36,7 @@
           }
         </div>
 
-        @if (chart(); as c) {
+        @if (trend(); as c) {
           @if (c.stats.count < 2) {
             <div class="single-reading">
               <span class="sr-label">Only one reading in this period</span>
@@ -48,38 +48,30 @@
           <div class="trend-stats">
             <div><span>Latest</span><strong>{{ c.stats.latest }}<small>{{ currentMetric().unit }}</small></strong></div>
             <div><span>Average</span><strong>{{ c.stats.avg }}</strong></div>
-            <div><span>Lowest</span><strong>{{ c.stats.min }}</strong></div>
-            <div><span>Highest</span><strong>{{ c.stats.max }}</strong></div>
+            @if (c.stats.min !== null) {
+              <div><span>Lowest</span><strong>{{ c.stats.min }}</strong></div>
+              <div><span>Highest</span><strong>{{ c.stats.max }}</strong></div>
+            }
+            @if (c.stats.outOfRange !== null) {
+              <div [class.sev-normal]="c.stats.worst === 'normal'" [class.sev-warn]="c.stats.worst === 'warn'" [class.sev-danger]="c.stats.worst === 'danger'">
+                <span>Out of range</span><strong>{{ c.stats.outOfRange }} of {{ c.stats.count }}</strong>
+              </div>
+            }
           </div>
 
-          <svg class="trend-svg" [attr.viewBox]="'0 0 ' + c.w + ' ' + c.h" role="img"
-               [attr.aria-label]="currentMetric().label + ' over the last ' + rangeDays() + ' days, ' + c.stats.count + ' readings. Latest ' + c.stats.latest + ' ' + currentMetric().unit + ', average ' + c.stats.avg + '.'">
-            @if (c.band) {
-              <rect class="band" [attr.x]="c.band.x" [attr.y]="c.band.y" [attr.width]="c.band.w" [attr.height]="c.band.h" rx="4" />
-            }
-            @for (tk of c.yTicks; track tk.y) {
-              <line class="grid" [attr.x1]="c.left" [attr.x2]="c.right" [attr.y1]="tk.y" [attr.y2]="tk.y" />
-              <text class="axis" [attr.x]="c.left - 6" [attr.y]="tk.y + 3" text-anchor="end">{{ tk.label }}</text>
-            }
-            @for (xl of c.xLabels; track xl.x) {
-              <text class="axis" [attr.x]="xl.x" [attr.y]="c.bottom + 16" [attr.text-anchor]="xl.anchor">{{ xl.label }}</text>
-            }
-            @for (ln of c.lines; track $index) {
-              <g [class.second]="$index === 1">
-                <polyline class="series" [attr.points]="ln.points" />
-                @for (p of ln.dots; track p.x) {
-                  <circle class="dot" [attr.cx]="p.x" [attr.cy]="p.y" r="3.5"><title>{{ p.tip }}</title></circle>
-                }
-              </g>
-            }
-          </svg>
+          <div class="trend-canvas">
+            <canvas #trendCanvas role="img"
+                    [attr.aria-label]="currentMetric().label + ' over the last ' + rangeDays() + ' days, ' + c.stats.count + ' readings. Latest ' + c.stats.latest + ' ' + currentMetric().unit + ', average ' + c.stats.avg + '.'"></canvas>
+          </div>
 
           <p class="trend-legend">
-            @if (currentMetric().band; as b) {
-              <span>Shaded: usual range ({{ b[0] }}–{{ b[1] }} {{ currentMetric().unit }}{{ currentMetric().key === 'bp' ? ' systolic' : '' }})</span>
-            }
-            @if (currentMetric().key === 'bp') {
+            @if (currentMetric().series.length > 1) {
               <span class="legend-key"><i class="k1"></i>Systolic<i class="k2"></i>Diastolic</span>
+            }
+            @if (c.rangeText) {
+              <span><i class="swatch"></i>Normal range: {{ c.rangeText }}</span>
+              <span class="legend-key"><i class="dot-ok"></i>Normal<i class="dot-warn"></i>Borderline<i class="dot-bad"></i>Abnormal</span>
+              <span class="legend-note">Each point is one day's reading; its colour compares it with the normal range.</span>
             }
           </p>
           @if (c.stats.count < 3) {

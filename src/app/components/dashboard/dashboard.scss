@@ -139,7 +139,7 @@
 .dash-hero-name {
   margin-top: 2px;
   font-size: var(--text-2xl);
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -0.02em;
   line-height: var(--leading-tight);
 }
@@ -162,19 +162,19 @@
 }
 
 .dash-card {
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   background: var(--surface);
   border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-card);
-  padding: 18px;
+  padding: 14px;
 }
 
 .dash-card-head {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 
 .dash-card-ico {
@@ -220,7 +220,7 @@
   overflow: hidden;
   background: var(--gray-50);
   border: 1px solid var(--gray-100);
-  border-left: 3px solid var(--lvl);
+  border-left: 2px solid var(--lvl);
   border-radius: var(--radius-sm);
   padding: 12px 14px;
   display: flex;
@@ -228,9 +228,9 @@
   gap: 6px;
 }
 
-.vital-tile.lvl-ok { --lvl: var(--success); --lvl-text: #15803d; }
-.vital-tile.lvl-watch { --lvl: var(--warning); --lvl-text: #b45309; }
-.vital-tile.lvl-alert { --lvl: var(--danger); --lvl-text: #b91c1c; }
+.vital-tile.lvl-ok { --lvl: rgba(var(--success-rgb), 0.18); --lvl-text: #15803d; }
+.vital-tile.lvl-watch { --lvl: rgba(var(--warning-rgb), 0.18); --lvl-text: #b45309; }
+.vital-tile.lvl-alert { --lvl: rgba(var(--danger-rgb), 0.18); --lvl-text: #b91c1c; }
 
 .vital-summary {
   font-size: var(--text-xs);
@@ -258,7 +258,8 @@
 
 .vt-value {
   font-size: var(--text-xl);
-  font-weight: 700;
+  font-weight: 600;
+  letter-spacing: -0.02em;
   color: var(--text-primary);
   line-height: 1;
   display: flex;
@@ -267,8 +268,9 @@
 }
 
 .vt-value small {
-  font-size: 0.65em;
-  font-weight: 600;
+  font-size: 0.62em;
+  font-weight: 500;
+  letter-spacing: 0;
   color: var(--text-muted);
 }
 
@@ -564,11 +566,11 @@
 
 /* Retention: today's nudge, milestones, insights */
 .nudge-card {
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 16px 18px;
+  padding: 12px 16px;
   border-radius: var(--radius-md);
   /* Opaque on purpose: this card overlaps the teal hero, so a translucent or
      teal fill would let the hero bleed through or vanish into it. */
@@ -623,38 +625,8 @@
 
 .nudge-card.done .nudge-streak { background: var(--surface); }
 
-.insight-list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.insight-list li {
-  font-size: var(--text-sm);
-  color: var(--text-secondary);
-  line-height: var(--leading-snug);
-  padding-left: 12px;
-  border-left: 3px solid var(--tint-primary-strong);
-}
-
 @media (max-width: 380px) {
   .nudge-card { flex-direction: column; align-items: stretch; }
-}
-
-.insight-inline {
-  margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px solid var(--gray-100);
-}
-
-.insight-inline h3 {
-  font-size: var(--text-xs);
-  font-weight: 600;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-bottom: 8px;
 }
 
 /* ---------- Desktop: use the width instead of one narrow column ---------- */

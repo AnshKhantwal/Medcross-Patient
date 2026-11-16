@@ -167,35 +167,6 @@ export class DashboardComponent {
     return '';
   });
 
-  /** Plain-language comparisons of the latest reading to the patient's own recent average. Descriptive only — not medical advice. */
-  insights = computed<string[]>(() => {
-    const metrics: { name: string; unit: string; pick: (v: VitalData) => number | null | undefined }[] = [
-      { name: 'Systolic BP', unit: 'points', pick: (v) => v.bpSystolic },
-      { name: 'Pulse', unit: 'bpm', pick: (v) => v.pulse },
-      { name: 'Weight', unit: 'kg', pick: (v) => v.weight }
-    ];
-    const latest = this.latestVitalsItem()?.vitals?.vitals;
-    if (!latest) return [];
-    const out: string[] = [];
-    for (const m of metrics) {
-      // Only compare metrics present in the latest reading, so the line always matches the tile shown above.
-      const current = m.pick(latest);
-      if (current == null) continue;
-      const vals = this.vitalsHistory().map((i) => m.pick(i.vitals!.vitals)).filter((n): n is number => n != null);
-      if (vals.length < 3) continue;
-      const prev = vals.slice(1, 8);
-      const avg = Math.round((prev.reduce((a, b) => a + b, 0) / prev.length) * 10) / 10;
-      const diff = Math.round((current - avg) * 10) / 10;
-      const basis = `your average of ${avg} over the last ${prev.length} readings`;
-      if (Math.abs(diff) < Math.max(1, avg * 0.02)) {
-        out.push(`${m.name} (${current}) is in line with ${basis}.`);
-      } else {
-        out.push(`${m.name} (${current}) is ${Math.abs(diff)} ${m.unit} ${diff < 0 ? 'below' : 'above'} ${basis}.`);
-      }
-    }
-    return out.slice(0, 2);
-  });
-
   runNudge(): void {
     const a = this.nudge().action;
     if (a === 'vitals') this.goToVitals();
@@ -285,8 +256,4 @@ export class DashboardComponent {
     this.router.navigate(['/tasks']);
   }
 
-  goToHistory(): void {
-    this.closeFab();
-    this.router.navigate(['/history']);
-  }
 }

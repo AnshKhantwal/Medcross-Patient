@@ -78,16 +78,8 @@ export class TasksComponent {
     }
   }
 
-  setAllTasksStatus(status: Exclude<TaskStatus, null>): void {
-    this.tasks.forEach(task => {
-      task.status = status;
-    });
-  }
-
-  clearAllStatuses(): void {
-    this.tasks.forEach(task => {
-      task.status = null;
-    });
+  clearAll(): void {
+    this.tasks.forEach(task => task.status = null);
   }
 
   getStatusCount(status: Exclude<TaskStatus, null>): number {

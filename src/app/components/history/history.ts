@@ -1,31 +1,33 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import type { Chart } from 'chart.js';
 import { TaskStatus } from '../tasks/tasks';
 import { VitalData } from '../vitals/vitals';
 import { HistoryTimelineItem, SubmissionHistoryService } from '../../services/submission-history.service';
+import { RangeKey, Severity, VITAL_RANGES, classifyVital, worseSeverity } from '../../services/vital-ranges';
+import { TrendRow, buildTrendChart } from './trend-chart';
 
-type MetricKey = 'bp' | 'pulse' | 'spo2' | 'temp' | 'weight';
+type MetricKey = 'bp' | 'pulse' | 'spo2' | 'temp' | 'resp' | 'weight';
 
 interface MetricDef {
   key: MetricKey;
   label: string;
   unit: string;
-  pick: (v: VitalData) => number | null;
-  pick2?: (v: VitalData) => number | null;
-  /** Usual range for general adults, drawn as a soft band — informational only. */
-  band?: [number, number];
   decimals: number;
+  maxCap?: number;
+  series: { name: string; pick: (v: VitalData) => number | null; range?: RangeKey }[];
 }
 
 const METRICS: MetricDef[] = [
-  { key: 'bp', label: 'Blood pressure', unit: 'mmHg', pick: (v) => v.bpSystolic, pick2: (v) => v.bpDiastolic, band: [90, 120], decimals: 0 },
-  { key: 'pulse', label: 'Pulse', unit: 'bpm', pick: (v) => v.pulse, band: [60, 100], decimals: 0 },
-  { key: 'spo2', label: 'Oxygen', unit: '%', pick: (v) => v.spo2, band: [95, 100], decimals: 0 },
-  { key: 'temp', label: 'Temperature', unit: '°F', pick: (v) => v.temperature, band: [97, 99], decimals: 1 },
-  { key: 'weight', label: 'Weight', unit: 'kg', pick: (v) => v.weight, decimals: 1 }
+  { key: 'bp', label: 'Blood pressure', unit: 'mmHg', decimals: 0, series: [
+    { name: 'Systolic', pick: (v) => v.bpSystolic, range: 'bpSys' },
+    { name: 'Diastolic', pick: (v) => v.bpDiastolic, range: 'bpDia' }] },
+  { key: 'pulse', label: 'Pulse', unit: 'bpm', decimals: 0, series: [{ name: 'Pulse', pick: (v) => v.pulse, range: 'pulse' }] },
+  { key: 'spo2', label: 'Oxygen', unit: '%', decimals: 0, maxCap: 100, series: [{ name: 'Oxygen', pick: (v) => v.spo2, range: 'spo2' }] },
+  { key: 'temp', label: 'Temperature', unit: '°F', decimals: 1, series: [{ name: 'Temperature', pick: (v) => v.temperature, range: 'temp' }] },
+  { key: 'resp', label: 'Resp. rate', unit: '/min', decimals: 0, series: [{ name: 'Resp. rate', pick: (v) => v.respiratoryRate, range: 'resp' }] },
+  { key: 'weight', label: 'Weight', unit: 'kg', decimals: 1, series: [{ name: 'Weight', pick: (v) => v.weight }] }
 ];
-
-const CHART = { w: 340, h: 190, l: 38, r: 12, t: 12, b: 26 };
 
 @Component({
   selector: 'app-history',
@@ -49,7 +51,21 @@ export class HistoryComponent {
   filterMode = signal<'all' | 'vitals' | 'tasks'>('all');
   searchQuery = signal<string>('');
 
+  private readonly canvas = viewChild<ElementRef<HTMLCanvasElement>>('trendCanvas');
+  private chartInstance: Chart | null = null;
+
   constructor() {
+    effect(() => {
+      const el = this.canvas()?.nativeElement;
+      const t = this.trend();
+      const m = this.currentMetric();
+      this.chartInstance?.destroy();
+      this.chartInstance = null;
+      if (!el || !t || t.stats.count < 2) return;
+      this.chartInstance = buildTrendChart(el, m, t.rows);
+    });
+    inject(DestroyRef).onDestroy(() => this.chartInstance?.destroy());
+
     this.submissionHistoryService.getAllHistory().subscribe({
       next: (items) => {
         this.historyItems.set(items);
@@ -152,87 +168,76 @@ export class HistoryComponent {
 
   currentMetric = computed(() => METRICS.find((m) => m.key === this.metricKey())!);
 
-  /** Chart geometry + summary stats for the selected metric and range. */
-  chart = computed(() => {
+  /** One point per logged day for the selected metric and range, plus the summary tiles above the chart. */
+  trend = computed(() => {
     const m = this.currentMetric();
-    const days = this.rangeDays();
-    const end = new Date();
-    end.setHours(0, 0, 0, 0);
-    const start = new Date(end);
-    start.setDate(start.getDate() - (days - 1));
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
+    start.setDate(start.getDate() - (this.rangeDays() - 1));
     const t0 = start.getTime();
-    const span = Math.max(end.getTime() - t0, 1);
+    const fmt = (n: number) => (m.decimals ? n.toFixed(m.decimals) : `${Math.round(n)}`);
 
-    const rows = this.historyItems()
+    const rows: (TrendRow & { time: number })[] = this.historyItems()
       .filter((i) => i.vitals)
-      .map((i) => ({
-        time: new Date(`${i.date}T00:00:00`).getTime(),
-        a: m.pick(i.vitals!.vitals),
-        b: m.pick2 ? m.pick2(i.vitals!.vitals) : null
-      }))
-      .filter((r) => r.time >= t0 && r.a != null)
-      .sort((x, y) => x.time - y.time);
+      .map((i) => {
+        const v = i.vitals!.vitals;
+        const date = new Date(`${i.date}T00:00:00`);
+        const values = m.series.map((s) => s.pick(v));
+        return {
+          time: date.getTime(),
+          shortLabel: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+          longLabel: this.formatDisplayDate(i.date),
+          values,
+          severity: values.map((n, si) => (m.series[si].range ? classifyVital(m.series[si].range!, n) : null))
+        };
+      })
+      .filter((r) => r.time >= t0 && r.values.some((n) => n !== null))
+      .sort((a, b) => a.time - b.time);
 
     if (!rows.length) return null;
 
-    const all = rows.flatMap((r) => [r.a as number, ...(r.b != null ? [r.b] : [])]);
-    let lo = Math.min(...all);
-    let hi = Math.max(...all);
-    if (m.band) {
-      lo = Math.min(lo, m.band[0]);
-      hi = Math.max(hi, m.band[1]);
-    }
-    const pad = (hi - lo || 1) * 0.12;
-    lo -= pad;
-    hi += pad;
-
-    const pw = CHART.w - CHART.l - CHART.r;
-    const ph = CHART.h - CHART.t - CHART.b;
-    const x = (time: number) => CHART.l + ((time - t0) / span) * pw;
-    const y = (v: number) => CHART.t + (1 - (v - lo) / (hi - lo)) * ph;
-    const fmt = (v: number) => (m.decimals ? v.toFixed(m.decimals) : `${Math.round(v)}`);
-    const shortDate = (time: number) => new Date(time).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-
-    const line = (pick: (r: (typeof rows)[number]) => number | null | undefined, label: string) => {
-      const pts = rows
-        .filter((r) => pick(r) != null)
-        .map((r) => ({
-          x: x(r.time),
-          y: y(pick(r) as number),
-          tip: `${label} ${fmt(pick(r) as number)} ${m.unit} — ${shortDate(r.time)}`
-        }));
-      return { points: pts.map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' '), dots: pts };
-    };
-
-    const lines = [line((r) => r.a, m.pick2 ? 'Systolic' : m.label)];
-    if (m.pick2) lines.push(line((r) => r.b, 'Diastolic'));
-
-    const yTicks = [0, 1, 2, 3].map((i) => ({
-      y: CHART.t + (ph * i) / 3,
-      label: fmt(hi - ((hi - lo) * i) / 3)
-    }));
-
-    const xLabels = [0, 0.5, 1].map((f) => ({
-      x: CHART.l + pw * f,
-      anchor: f === 0 ? 'start' : f === 1 ? 'end' : 'middle',
-      label: shortDate(t0 + span * f)
-    }));
-
-    const band = m.band ? { y: y(m.band[1]), h: Math.max(y(m.band[0]) - y(m.band[1]), 0), x: CHART.l, w: pw } : null;
-
-    const main = rows.map((r) => r.a as number);
-    const avg = main.reduce((s, n) => s + n, 0) / main.length;
+    const first = rows.map((r) => r.values[0]).filter((n): n is number => n !== null);
     const latest = rows[rows.length - 1];
-    const stats = {
-      latest: m.pick2 ? `${latest.a}/${latest.b ?? '–'}` : fmt(latest.a as number),
-      avg: fmt(avg),
-      min: fmt(Math.min(...main)),
-      max: fmt(Math.max(...main)),
-      count: rows.length,
-      latestDate: shortDate(latest.time)
-    };
+    const avg = m.series
+      .map((_, si) => {
+        const vals = rows.map((r) => r.values[si]).filter((n): n is number => n !== null);
+        return vals.length ? fmt(vals.reduce((s, n) => s + n, 0) / vals.length) : '–';
+      })
+      .join('/');
 
-    return { lines, yTicks, xLabels, band, stats, w: CHART.w, h: CHART.h, bottom: CHART.h - CHART.b, left: CHART.l, right: CHART.w - CHART.r };
+    const hasRange = !!m.series[0].range;
+    let worst: Severity | null = null;
+    let outOfRange = 0;
+    for (const r of rows) {
+      const day = r.severity.reduce<Severity | null>((w, s) => worseSeverity(w, s), null);
+      worst = worseSeverity(worst, day);
+      if (day === 'warn' || day === 'danger') outOfRange++;
+    }
+
+    const rangeText = hasRange
+      ? m.series
+          .map((s) => {
+            const r = VITAL_RANGES[s.range!];
+            const text = r.normalHigh === Infinity ? `${r.normalLow} or above` : `${r.normalLow}–${r.normalHigh}`;
+            return m.series.length > 1 ? `${s.name.toLowerCase()} ${text}` : text;
+          })
+          .join(', ') + ` ${m.unit}`
+      : null;
+
+    return {
+      rows,
+      rangeText,
+      stats: {
+        latest: m.series.length > 1 ? latest.values.map((n) => (n === null ? '–' : fmt(n))).join('/') : fmt(latest.values[0] as number),
+        avg,
+        min: m.series.length === 1 && first.length ? fmt(Math.min(...first)) : null,
+        max: m.series.length === 1 && first.length ? fmt(Math.max(...first)) : null,
+        count: rows.length,
+        latestDate: latest.shortLabel,
+        outOfRange: hasRange ? outOfRange : null,
+        worst
+      }
+    };
   });
 
   goBack(): void {

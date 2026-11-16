@@ -92,17 +92,6 @@
             </div>
           }
         </div>
-        @if (insights().length) {
-          <div class="insight-inline">
-            <h3>Compared with your recent average</h3>
-            <ul class="insight-list">
-              @for (line of insights(); track line) {
-                <li>{{ line }}</li>
-              }
-            </ul>
-          </div>
-        }
-        <button type="button" class="dash-link" (click)="goToHistory()">View all history</button>
       } @else {
         <p class="dash-empty">No vitals recorded yet.</p>
         <button type="button" class="dash-btn" (click)="goToVitals()">Record vitals</button>
