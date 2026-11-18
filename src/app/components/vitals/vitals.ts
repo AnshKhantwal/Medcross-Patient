@@ -81,6 +81,57 @@ export class VitalsComponent {
     return value !== null && value !== undefined && (value < min || value > max);
   }
 
+  /** Hard limits matching the API's plausibility check — used for the blocking, field-named toast. */
+  private readonly fieldRules: Array<{ key: keyof VitalData; label: string; min: number; max: number; unit: string }> = [
+    { key: 'bpSystolic', label: 'Systolic blood pressure', min: 41, max: 299, unit: 'mmHg' },
+    { key: 'bpDiastolic', label: 'Diastolic blood pressure', min: 21, max: 199, unit: 'mmHg' },
+    { key: 'pulse', label: 'Pulse', min: 1, max: 299, unit: 'bpm' },
+    { key: 'spo2', label: 'SpO2', min: 1, max: 100, unit: '%' },
+    { key: 'respiratoryRate', label: 'Respiratory rate', min: 1, max: 99, unit: 'breaths/min' },
+    { key: 'weight', label: 'Weight', min: 1, max: 399, unit: 'kg' }
+  ];
+
+  /** Returns a message naming the first field that's filled in but out of range, or null if all are fine. */
+  private validateVitals(): string | null {
+    const temp = this.vitals.temperature;
+    if (temp !== null && temp !== undefined && (temp <= 80 || temp >= 115)) {
+      return 'Temperature must be between 80 and 115 °F.';
+    }
+
+    for (const rule of this.fieldRules) {
+      const value = this.vitals[rule.key] as number | null;
+      if (value === null || value === undefined) continue;
+      if (value < rule.min || value > rule.max) {
+        return `${rule.label} must be between ${rule.min} and ${rule.max} ${rule.unit}.`;
+      }
+    }
+    return null;
+  }
+
+  /** Truncates the integer part to at most `maxIntDigits` digits and rounds the fraction to `maxDecimals` places. */
+  private clampDigits(value: number, maxIntDigits: number, maxDecimals = 0): number {
+    if (!Number.isFinite(value)) return value;
+    const sign = value < 0 ? -1 : 1;
+    const abs = Math.abs(value);
+    const intPart = Math.trunc(abs);
+    const intStr = intPart.toString();
+    const truncatedInt = intStr.length > maxIntDigits ? Number(intStr.slice(0, maxIntDigits)) : intPart;
+    const frac = abs - intPart;
+    const scale = 10 ** maxDecimals;
+    const roundedFrac = maxDecimals > 0 ? Math.round(frac * scale) / scale : 0;
+    return sign * (truncatedInt + roundedFrac);
+  }
+
+  /** Bound to (ngModelChange) on the 3-digit-max vitals so typing a 4th digit is rejected live. */
+  onVitalInput(field: 'weight' | 'bpSystolic' | 'bpDiastolic' | 'spo2' | 'pulse' | 'respiratoryRate', value: number | null): void {
+    this.vitals[field] = value === null ? null : this.clampDigits(value, 3);
+  }
+
+  /** Temperature allows up to 3 digits before the decimal point and 2 after it, e.g. 104.25. */
+  onTemperatureInput(value: number | null): void {
+    this.vitals.temperature = value === null ? null : this.clampDigits(value, 3, 2);
+  }
+
   constructor(
     private router: Router,
     private submissionHistoryService: SubmissionHistoryService
@@ -102,6 +153,12 @@ export class VitalsComponent {
   onSubmit(): void {
     const selectedDate = this.selectedDate();
     if (!selectedDate || this.isSubmitting()) {
+      return;
+    }
+
+    const validationError = this.validateVitals();
+    if (validationError) {
+      this.toast.show(validationError, 'error');
       return;
     }
 
