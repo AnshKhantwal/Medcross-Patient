@@ -936,3 +936,53 @@
 .submit-btn:disabled svg { fill: var(--gray-500); }
 
 .task-icon svg.ico { width: 22px; height: 22px; fill: none; stroke: var(--primary); }
+
+/* Shown when the selected day already has a check-in: tasks are logged once a day. */
+.logged-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: rgba(var(--success-rgb), 0.08);
+  border: 1px solid rgba(var(--success-rgb), 0.25);
+  color: var(--text-primary);
+}
+
+.logged-notice strong {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.logged-notice span {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+
+.logged-notice-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--success);
+}
+
+.logged-notice-icon svg {
+  width: 16px;
+  height: 16px;
+  fill: #fff;
+}
+
+/* Saved answers stay readable; only the interaction goes away. */
+.radio-option:disabled {
+  cursor: default;
+}
+
+.radio-option:disabled:not(.selected) {
+  opacity: 0.45;
+}

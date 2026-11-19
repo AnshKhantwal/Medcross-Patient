@@ -48,6 +48,7 @@
             <input type="number" class="vital-input" placeholder="120" min="60" max="250" maxlength="3"
                    inputmode="numeric" enterkeyhint="next" aria-label="Systolic (top number)"
                    (keydown)="onDigitKeydown($event, 3)" (paste)="onDigitPaste($event, 3)"
+                   [class.invalid]="fieldError('bpSystolic')"
                    [(ngModel)]="vitals.bpSystolic" name="bpSystolic">
           </div>
           <span class="vital-separator">/</span>
@@ -55,11 +56,17 @@
             <input type="number" class="vital-input" placeholder="80" min="40" max="150" maxlength="3"
                    inputmode="numeric" enterkeyhint="next" aria-label="Diastolic (bottom number)"
                    (keydown)="onDigitKeydown($event, 3)" (paste)="onDigitPaste($event, 3)"
+                   [class.invalid]="fieldError('bpDiastolic')"
                    [(ngModel)]="vitals.bpDiastolic" name="bpDiastolic">
           </div>
           <span class="vital-unit">mmHg</span>
         </div>
-        <p class="vital-hint">Systolic (top) over diastolic (bottom)</p>
+        @let bpErrors = groupErrors([['bpSystolic', 'Systolic'], ['bpDiastolic', 'Diastolic']]);
+        @if (bpErrors.length) {
+          <p class="vital-error" role="alert">{{ bpErrors.join(' · ') }}</p>
+        } @else {
+          <p class="vital-hint">Systolic (top) over diastolic (bottom)</p>
+        }
       </div>
 
       <!-- Pulse -->
@@ -75,11 +82,16 @@
             <input id="pulse" type="number" class="vital-input" placeholder="72" min="40" max="200" maxlength="3"
                    inputmode="numeric" enterkeyhint="next"
                    (keydown)="onDigitKeydown($event, 3)" (paste)="onDigitPaste($event, 3)"
+                   [class.invalid]="fieldError('pulse')"
                    [(ngModel)]="vitals.pulse" name="pulse">
           </div>
           <span class="vital-unit">bpm</span>
         </div>
-        <p class="vital-hint">Resting rate is usually 60–100 bpm</p>
+        @if (fieldError('pulse'); as err) {
+          <p class="vital-error" role="alert">{{ err }}</p>
+        } @else {
+          <p class="vital-hint">Resting rate is usually 60–100 bpm</p>
+        }
       </div>
 
       <!-- SpO2 -->
@@ -95,11 +107,14 @@
             <input id="spo2" type="number" class="vital-input" placeholder="98" min="70" max="100" maxlength="3"
                    inputmode="numeric" enterkeyhint="next"
                    (keydown)="onDigitKeydown($event, 3)" (paste)="onDigitPaste($event, 3)"
+                   [class.invalid]="fieldError('spo2')"
                    [(ngModel)]="vitals.spo2" name="spo2">
           </div>
           <span class="vital-unit">%</span>
         </div>
-        @if (outOfRange(vitals.spo2, 90, 100)) {
+        @if (fieldError('spo2'); as err) {
+          <p class="vital-error" role="alert">{{ err }}</p>
+        } @else if (outOfRange(vitals.spo2, 90, 100)) {
           <p class="vital-flag">Below 90% is unusual — check the sensor and try again.</p>
         } @else {
           <p class="vital-hint">Normal is 95–100%</p>
@@ -119,11 +134,14 @@
             <input id="temperature" type="number" class="vital-input" placeholder="98.6" min="90" max="110" step="0.01" maxlength="6"
                    inputmode="decimal" enterkeyhint="next"
                    (keydown)="onDigitKeydown($event, 3, true, 2)" (paste)="onDigitPaste($event, 3, true, 2)"
+                   [class.invalid]="fieldError('temperature')"
                    [(ngModel)]="vitals.temperature" name="temperature">
           </div>
           <span class="vital-unit">°F</span>
         </div>
-        @if (outOfRange(vitals.temperature, 95, 104)) {
+        @if (fieldError('temperature'); as err) {
+          <p class="vital-error" role="alert">{{ err }}</p>
+        } @else if (outOfRange(vitals.temperature, 95, 104)) {
           <p class="vital-flag">That's outside the usual range (95–104 °F). Double-check the reading.</p>
         } @else {
           <p class="vital-hint">Normal is around 97–99 °F</p>
@@ -143,11 +161,16 @@
             <input id="respiratoryRate" type="number" class="vital-input" placeholder="16" min="8" max="40" maxlength="2"
                    inputmode="numeric" enterkeyhint="next"
                    (keydown)="onDigitKeydown($event, 2)" (paste)="onDigitPaste($event, 2)"
+                   [class.invalid]="fieldError('respiratoryRate')"
                    [(ngModel)]="vitals.respiratoryRate" name="respiratoryRate">
           </div>
           <span class="vital-unit">breaths/min</span>
         </div>
-        <p class="vital-hint">Typically 12–20 breaths per minute</p>
+        @if (fieldError('respiratoryRate'); as err) {
+          <p class="vital-error" role="alert">{{ err }}</p>
+        } @else {
+          <p class="vital-hint">Typically 12–20 breaths per minute</p>
+        }
       </div>
 
       <!-- Weight -->
@@ -163,11 +186,16 @@
             <input id="weight" type="number" class="vital-input" placeholder="70" min="0" step="0.1" maxlength="5"
                    inputmode="decimal" enterkeyhint="next"
                    (keydown)="onDigitKeydown($event, 3, true, 1)" (paste)="onDigitPaste($event, 3, true, 1)"
+                   [class.invalid]="fieldError('weight')"
                    [(ngModel)]="vitals.weight" name="weight">
           </div>
           <span class="vital-unit">kg</span>
         </div>
-        <p class="vital-hint">Enter to one decimal place, e.g. 70.5</p>
+        @if (fieldError('weight'); as err) {
+          <p class="vital-error" role="alert">{{ err }}</p>
+        } @else {
+          <p class="vital-hint">Enter to one decimal place, e.g. 70.5</p>
+        }
       </div>
 
       <!-- Height -->
@@ -183,6 +211,7 @@
             <input type="number" class="vital-input" placeholder="5" min="1" max="8" maxlength="1"
                    inputmode="numeric" enterkeyhint="next" aria-label="Feet"
                    (keydown)="onDigitKeydown($event, 1)" (paste)="onDigitPaste($event, 1)"
+                   [class.invalid]="fieldError('heightFeet')"
                    [(ngModel)]="vitals.heightFeet" name="heightFeet">
           </div>
           <span class="vital-unit">ft</span>
@@ -190,11 +219,17 @@
             <input type="number" class="vital-input" placeholder="8" min="0" max="11" maxlength="2"
                    inputmode="numeric" enterkeyhint="done" aria-label="Inches"
                    (keydown)="onDigitKeydown($event, 2)" (paste)="onDigitPaste($event, 2)"
+                   [class.invalid]="fieldError('heightInches')"
                    [(ngModel)]="vitals.heightInches" name="heightInches">
           </div>
           <span class="vital-unit">in</span>
         </div>
-        <p class="vital-hint">Feet is required; inches only if it's not a whole number of feet</p>
+        @let heightErrors = groupErrors([['heightFeet', 'Feet'], ['heightInches', 'Inches']]);
+        @if (heightErrors.length) {
+          <p class="vital-error" role="alert">{{ heightErrors.join(' · ') }}</p>
+        } @else {
+          <p class="vital-hint">Feet is required; inches only if it's not a whole number of feet</p>
+        }
       </div>
     </div>
 

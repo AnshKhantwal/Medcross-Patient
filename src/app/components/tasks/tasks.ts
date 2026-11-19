@@ -51,15 +51,45 @@ export class TasksComponent {
 
   private toast = inject(ToastService);
   isSubmitting = signal(false);
+  /** True when the selected day already has a saved check-in; the form is then read-only. */
+  alreadyLogged = signal(false);
+  isLoadingDay = signal(false);
 
   constructor(
     private router: Router,
     private submissionHistoryService: SubmissionHistoryService
-  ) {}
+  ) {
+    this.loadDay(this.selectedDate()!);
+  }
 
   onDateSelected(date: Date): void {
     this.selectedDate.set(date);
     this.step.set('tasks');
+    this.loadDay(date);
+  }
+
+  /** Tasks are logged once per day: show what was saved for this day, or a blank form if nothing was. */
+  private loadDay(date: Date): void {
+    this.isLoadingDay.set(true);
+    this.alreadyLogged.set(false);
+    this.tasks.forEach((t) => (t.status = null));
+
+    this.submissionHistoryService.getTasksForDate(date).subscribe({
+      next: (saved) => {
+        // Ignore a slow response for a day the user has since navigated away from.
+        if (this.selectedDate()?.toDateString() !== date.toDateString()) return;
+        for (const entry of saved) {
+          const task = this.tasks.find((t) => t.id === entry.taskKey);
+          if (task) task.status = entry.status as TaskStatus;
+        }
+        this.alreadyLogged.set(saved.length > 0);
+        this.isLoadingDay.set(false);
+      },
+      error: () => {
+        this.isLoadingDay.set(false);
+        this.toast.show('Could not check this day’s tasks. Please try again.', 'error');
+      }
+    });
   }
 
   closeCalendar(): void {
@@ -71,6 +101,7 @@ export class TasksComponent {
   }
 
   setTaskStatus(taskId: string, status: TaskStatus): void {
+    if (this.alreadyLogged()) return;
     const task = this.tasks.find(t => t.id === taskId);
     if (task) {
       // Toggle off if same status clicked
@@ -99,12 +130,12 @@ export class TasksComponent {
   }
 
   canSubmit(): boolean {
-    return this.getAnsweredCount() > 0;
+    return !this.alreadyLogged() && !this.isLoadingDay() && this.getAnsweredCount() > 0;
   }
 
   onSubmit(): void {
     const selectedDate = this.selectedDate();
-    if (!selectedDate || this.isSubmitting()) {
+    if (!selectedDate || this.isSubmitting() || !this.canSubmit()) {
       return;
     }
 
@@ -118,6 +149,8 @@ export class TasksComponent {
         this.isSubmitting.set(false);
         const message = err?.error?.error ?? 'Could not save tasks. Please try again.';
         this.toast.show(message, 'error');
+        // Logged from another tab or device in the meantime: switch to the read-only view.
+        if (err?.status === 409) this.loadDay(selectedDate);
       }
     });
   }

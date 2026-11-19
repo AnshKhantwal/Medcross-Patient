@@ -40,7 +40,7 @@ interface ApiVitalsRecord {
   spo2: number | null;
 }
 
-interface ApiTaskCheckIn {
+export interface ApiTaskCheckIn {
   taskKey: string;
   status: string;
 }
@@ -93,6 +93,13 @@ export class SubmissionHistoryService {
     };
 
     return this.http.post<void>(`${this.base}/tasks`, payload);
+  }
+
+  /** The task check-ins already saved for a day; empty when nothing has been logged yet. */
+  getTasksForDate(date: Date): Observable<ApiTaskCheckIn[]> {
+    return this.http
+      .get<{ date: string; tasks: ApiTaskCheckIn[] }>(`${this.base}/tasks`, { params: { date: this.toIsoDate(date) } })
+      .pipe(map((res) => res.tasks));
   }
 
   getHistoryByDate(date: Date): Observable<HistoryRecord> {
