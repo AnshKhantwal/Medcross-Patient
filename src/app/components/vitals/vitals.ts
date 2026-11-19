@@ -75,50 +75,71 @@ export class VitalsComponent {
   }
 
   /**
-   * Hard limits matching the API's plausibility check, in on-screen order. Every field is
-   * mandatory except height in inches: a whole number of feet (e.g. 5'0") is a complete height.
-   * Temperature's API bounds are exclusive (80 < t < 115), so it's checked separately.
+   * Hard limits matching the API's plausibility check, in on-screen order, with the plain-language
+   * name used in messages. Every field is mandatory except height in inches: a whole number of
+   * feet (e.g. 5'0") is a complete height. Temperature's API bounds are exclusive (80 < t < 115).
    */
-  private readonly fieldRules: Array<{ key: keyof VitalData; min: number; max: number; unit: string; required: boolean }> = [
-    { key: 'bpSystolic', min: 41, max: 299, unit: 'mmHg', required: true },
-    { key: 'bpDiastolic', min: 21, max: 199, unit: 'mmHg', required: true },
-    { key: 'pulse', min: 1, max: 299, unit: 'bpm', required: true },
-    { key: 'spo2', min: 1, max: 100, unit: '%', required: true },
-    { key: 'temperature', min: 80, max: 115, unit: '°F', required: true },
-    { key: 'respiratoryRate', min: 1, max: 99, unit: 'breaths/min', required: true },
-    { key: 'weight', min: 1, max: 399, unit: 'kg', required: true },
-    { key: 'heightFeet', min: 1, max: 8, unit: 'ft', required: true },
-    { key: 'heightInches', min: 0, max: 11, unit: 'in', required: false }
+  private readonly fieldRules: Array<{ key: keyof VitalData; name: string; min: number; max: number; unit: string; required: boolean }> = [
+    { key: 'bpSystolic', name: 'the top number (systolic)', min: 41, max: 299, unit: 'mmHg', required: true },
+    { key: 'bpDiastolic', name: 'the bottom number (diastolic)', min: 21, max: 199, unit: 'mmHg', required: true },
+    { key: 'pulse', name: 'your pulse', min: 1, max: 299, unit: 'bpm', required: true },
+    { key: 'spo2', name: 'your oxygen level', min: 1, max: 100, unit: '%', required: true },
+    { key: 'temperature', name: 'your temperature', min: 80, max: 115, unit: '°F', required: true },
+    { key: 'respiratoryRate', name: 'your breathing rate', min: 1, max: 99, unit: 'breaths per minute', required: true },
+    { key: 'weight', name: 'your weight', min: 1, max: 399, unit: 'kg', required: true },
+    { key: 'heightFeet', name: 'your height in feet', min: 1, max: 8, unit: 'feet', required: true },
+    { key: 'heightInches', name: 'inches', min: 0, max: 11, unit: 'inches', required: false }
   ];
 
-  /** Set on the first submit attempt; errors stay hidden until then so half-typed values aren't flagged. */
+  /** Set on the first submit attempt; only then are empty boxes flagged. */
   submitAttempted = signal(false);
+  /** Boxes the user has left at least once; "too low" waits for this so typing 120 doesn't flag the 1. */
+  private touched = signal<ReadonlySet<keyof VitalData>>(new Set());
 
-  private errorFor(key: keyof VitalData): string | null {
+  markTouched(key: keyof VitalData): void {
+    if (!this.touched().has(key)) {
+      this.touched.update((s) => new Set(s).add(key));
+    }
+  }
+
+  private problemWith(key: keyof VitalData): { kind: 'missing' | 'high' | 'low'; message: string } | null {
     const rule = this.fieldRules.find((r) => r.key === key)!;
     const value = this.vitals[key];
     if (value === null || value === undefined) {
-      return rule.required ? 'Required' : null;
+      return rule.required ? { kind: 'missing', message: `Please enter ${rule.name}.` } : null;
     }
-    const outside = key === 'temperature'
-      ? value <= rule.min || value >= rule.max
-      : value < rule.min || value > rule.max;
-    return outside ? `Must be between ${rule.min} and ${rule.max} ${rule.unit}` : null;
+
+    const exclusive = key === 'temperature';
+    const tooHigh = exclusive ? value >= rule.max : value > rule.max;
+    const tooLow = exclusive ? value <= rule.min : value < rule.min;
+    const subject = rule.name.charAt(0).toUpperCase() + rule.name.slice(1);
+    if (tooHigh) {
+      const limit = exclusive ? `must be below ${rule.max} ${rule.unit}` : `can't be more than ${rule.max} ${rule.unit}`;
+      return { kind: 'high', message: `That's too high. ${subject} ${limit}. Please check the reading.` };
+    }
+    if (tooLow) {
+      const limit = exclusive ? `must be above ${rule.min} ${rule.unit}` : `can't be less than ${rule.min} ${rule.unit}`;
+      return { kind: 'low', message: `That's too low. ${subject} ${limit}. Please check the reading.` };
+    }
+    return null;
   }
 
-  /** The message shown under a field, or null when it's valid or the user hasn't tried to submit yet. */
+  /**
+   * The message shown under a box while the user fills the form: too-high values right away
+   * (more digits can only make them higher), too-low once they leave the box, and empty boxes
+   * only after a submit attempt.
+   */
   fieldError(key: keyof VitalData): string | null {
-    return this.submitAttempted() ? this.errorFor(key) : null;
+    const problem = this.problemWith(key);
+    if (!problem) return null;
+    if (problem.kind === 'high') return problem.message;
+    if (problem.kind === 'low') return this.touched().has(key) || this.submitAttempted() ? problem.message : null;
+    return this.submitAttempted() ? problem.message : null;
   }
 
-  /** Messages for a grouped field (BP, height), each prefixed with which box it refers to. */
-  groupErrors(parts: Array<[keyof VitalData, string]>): string[] {
-    return parts
-      .map(([key, name]) => {
-        const err = this.fieldError(key);
-        return err ? `${name}: ${err === 'Required' ? 'required' : err.charAt(0).toLowerCase() + err.slice(1)}` : null;
-      })
-      .filter((m): m is string => m !== null);
+  /** All visible messages for a field made of two boxes (blood pressure, height). */
+  groupErrors(keys: Array<keyof VitalData>): string[] {
+    return keys.map((k) => this.fieldError(k)).filter((m): m is string => m !== null);
   }
 
   /**
@@ -141,7 +162,11 @@ export class VitalsComponent {
       return;
     }
 
-    if (!/^[0-9]$/.test(event.key)) return;
+    // Number inputs still accept "-", "+" and "e"; no vital can be negative or in exponent form.
+    if (!/^[0-9]$/.test(event.key)) {
+      event.preventDefault();
+      return;
+    }
 
     const dotIndex = value.indexOf('.');
     const isBeforeDecimal = dotIndex === -1 || start <= dotIndex;
@@ -190,7 +215,7 @@ export class VitalsComponent {
     }
 
     this.submitAttempted.set(true);
-    const invalid = this.fieldRules.filter((r) => this.errorFor(r.key) !== null).map((r) => r.key);
+    const invalid = this.fieldRules.filter((r) => this.problemWith(r.key) !== null).map((r) => r.key);
     if (invalid.length > 0) {
       this.toast.show(
         invalid.length === 1 ? 'Please fix the highlighted field.' : `Please fix the ${invalid.length} highlighted fields.`,
@@ -271,6 +296,7 @@ export class VitalsComponent {
       spo2: null
     };
     this.submitAttempted.set(false);
+    this.touched.set(new Set());
     this.selectedDate.set(null);
     this.step.set('calendar');
   }
