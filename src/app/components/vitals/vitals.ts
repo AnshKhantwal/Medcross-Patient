@@ -112,8 +112,7 @@ export class VitalsComponent {
 
   /** Fields that only make sense together — both filled in or both left blank, never just one. */
   private readonly pairedFields: Array<{ a: keyof VitalData; b: keyof VitalData; message: string }> = [
-    { a: 'bpSystolic', b: 'bpDiastolic', message: 'Enter both systolic and diastolic blood pressure, or leave blood pressure blank.' },
-    { a: 'heightFeet', b: 'heightInches', message: 'Enter both feet and inches for height, or leave height blank.' }
+    { a: 'bpSystolic', b: 'bpDiastolic', message: 'Enter both systolic and diastolic blood pressure, or leave blood pressure blank.' }
   ];
 
   /** Returns a message for every pair where exactly one side was filled in. */
@@ -126,6 +125,15 @@ export class VitalsComponent {
         errors.push(pair.message);
       }
     }
+
+    // Height is the one asymmetric case: whole feet alone is a complete height (e.g. 5'0"),
+    // but inches alone with no feet isn't.
+    const feetFilled = this.vitals.heightFeet !== null && this.vitals.heightFeet !== undefined;
+    const inchesFilled = this.vitals.heightInches !== null && this.vitals.heightInches !== undefined;
+    if (inchesFilled && !feetFilled) {
+      errors.push('Enter feet along with inches for height.');
+    }
+
     return errors;
   }
 
