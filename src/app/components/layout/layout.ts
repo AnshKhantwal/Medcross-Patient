@@ -1,12 +1,11 @@
 import { Component, signal } from '@angular/core';
 import { NgIf } from '@angular/common';
-import { ToastComponent } from '../toast/toast';
 import { RouterLink, RouterLinkActive, RouterOutlet, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-layout',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, NgIf, ToastComponent],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, NgIf],
   templateUrl: './layout.html',
   styleUrl: './layout.scss'
 })

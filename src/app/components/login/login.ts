@@ -13,6 +13,7 @@ export class LoginComponent {
   patientNumber = signal('');
   password = signal('');
   showError = signal(false);
+  formatError = signal(false);
   showPassword = signal(false);
   isSubmitting = signal(false);
 
@@ -26,13 +27,35 @@ export class LoginComponent {
     }
   }
 
+  /** Rejects any non-digit insertion (typing, mobile IME, drag-drop) before it reaches the field. */
+  onPatientNumberBeforeInput(event: InputEvent): void {
+    if (event.inputType.startsWith('insert') && event.data && !/^\d+$/.test(event.data)) {
+      event.preventDefault();
+    }
+  }
+
+  /** Blocks a paste containing anything but digits rather than stripping it. */
+  onPatientNumberPaste(event: ClipboardEvent): void {
+    const pasted = event.clipboardData?.getData('text') ?? '';
+    if (!/^\d+$/.test(pasted)) {
+      event.preventDefault();
+    }
+  }
+
   onSubmit(): void {
     if (this.isSubmitting()) {
       return;
     }
 
+    if (!/^\d+$/.test(this.patientNumber())) {
+      this.formatError.set(true);
+      this.showError.set(false);
+      return;
+    }
+
     this.isSubmitting.set(true);
     this.showError.set(false);
+    this.formatError.set(false);
 
     this.authService.login(this.patientNumber(), this.password()).subscribe({
       next: (res) => {

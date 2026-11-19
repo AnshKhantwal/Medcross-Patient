@@ -17,6 +17,9 @@ interface LoginResponse {
 const TOKEN_KEY = 'medcross_token';
 const PATIENT_KEY = 'medcross_patient';
 const MUST_CHANGE_KEY = 'medcross_must_change_password';
+const LAST_ACTIVITY_KEY = 'medcross_last_activity';
+
+export const IDLE_LIMIT_MS = 15 * 60 * 1000;
 
 @Injectable({
   providedIn: 'root'
@@ -58,6 +61,7 @@ export class AuthService {
         localStorage.setItem(TOKEN_KEY, res.accessToken);
         localStorage.setItem(PATIENT_KEY, JSON.stringify({ name: res.patientName }));
         localStorage.setItem(MUST_CHANGE_KEY, String(res.mustChangePassword));
+        this.recordActivity();
         this.currentPatient.set({ name: res.patientName });
         this.mustChangePassword.set(res.mustChangePassword);
       })
@@ -90,6 +94,22 @@ export class AuthService {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(PATIENT_KEY);
     localStorage.removeItem(MUST_CHANGE_KEY);
+    localStorage.removeItem(LAST_ACTIVITY_KEY);
+  }
+
+  /** Stored in localStorage so activity in any open tab keeps every tab's session alive. */
+  recordActivity(): void {
+    localStorage.setItem(LAST_ACTIVITY_KEY, String(Date.now()));
+  }
+
+  isIdleExpired(): boolean {
+    const last = Number(localStorage.getItem(LAST_ACTIVITY_KEY));
+    return !last || Date.now() - last >= IDLE_LIMIT_MS;
+  }
+
+  isTokenValid(): boolean {
+    const token = this.getToken();
+    return !!token && !this.isTokenExpired(token);
   }
 
   getPatient() {
@@ -105,11 +125,7 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    const token = this.getToken();
-    if (!token) {
-      return false;
-    }
-    return !this.isTokenExpired(token);
+    return this.isTokenValid() && !this.isIdleExpired();
   }
 
   private isTokenExpired(token: string): boolean {

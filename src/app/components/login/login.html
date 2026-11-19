@@ -43,8 +43,13 @@
           <input
             id="patientNumber"
             type="text"
+            inputmode="numeric"
+            pattern="[0-9]*"
+            maxlength="15"
             [ngModel]="patientNumber()"
-            (ngModelChange)="patientNumber.set($event); showError.set(false)"
+            (ngModelChange)="patientNumber.set($event); showError.set(false); formatError.set(false)"
+            (beforeinput)="onPatientNumberBeforeInput($event)"
+            (paste)="onPatientNumberPaste($event)"
             name="patientNumber"
             placeholder="e.g. 100234"
             autocomplete="username"
@@ -55,6 +60,12 @@
             required>
           <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg>
         </div>
+        @if (formatError()) {
+          <div class="error-message" role="alert">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+            Patient number can contain digits only — no spaces or symbols.
+          </div>
+        }
       </div>
       <div class="input-group">
         <label for="password">Password</label>
@@ -88,7 +99,7 @@
           </div>
         }
       </div>
-      <button type="submit" class="login-btn" [disabled]="isSubmitting() || !patientNumber().trim() || !password()">
+      <button type="submit" class="login-btn" [disabled]="isSubmitting() || !patientNumber() || !password()">
         @if (isSubmitting()) {
           <span class="btn-spinner" aria-hidden="true"></span>
           Signing in…
