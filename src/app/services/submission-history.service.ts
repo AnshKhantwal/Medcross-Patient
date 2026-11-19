@@ -128,10 +128,14 @@ export class SubmissionHistoryService {
       tasksHistory: this.http.get<ApiTasksHistoryEntry[]>(`${this.base}/tasks/history`)
     }).pipe(
       map(({ vitals, tasksHistory }) => {
+        // The API returns vitals newest-first and a day can have several readings; keep the
+        // first (latest) one per day rather than letting older readings overwrite it.
         const vitalsByDate = new Map<string, VitalsSubmission>();
         for (const v of vitals) {
           const isoDate = this.toIsoDate(new Date(v.date));
-          vitalsByDate.set(isoDate, this.toVitalsSubmission(v));
+          if (!vitalsByDate.has(isoDate)) {
+            vitalsByDate.set(isoDate, this.toVitalsSubmission(v));
+          }
         }
 
         const tasksByDate = new Map<string, TasksSubmission>();

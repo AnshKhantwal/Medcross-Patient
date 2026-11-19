@@ -122,7 +122,7 @@
           <li class="partial" [class.zero]="!taskStats().partial">{{ taskStats().partial }} partial</li>
           <li class="none" [class.zero]="!taskStats().none">{{ taskStats().none }} not done</li>
         </ul>
-        <button type="button" class="dash-link" (click)="goToTasks()">Update today's tasks</button>
+        <button type="button" class="dash-link" (click)="goToTasks()">View today's tasks</button>
       } @else {
         <p class="dash-empty">You haven't logged today's tasks yet.</p>
         <button type="button" class="dash-btn" (click)="goToTasks()">Log tasks</button>
