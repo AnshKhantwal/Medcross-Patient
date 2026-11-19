@@ -30,7 +30,7 @@
       </div>
     </div>
     <h1 class="vitals-title">Record Vitals</h1>
-    <p class="vitals-subtitle">Fill in what you measured today — you can leave the rest blank.</p>
+    <p class="vitals-subtitle">Fill in every measurement below (height in inches is the only optional one).</p>
   </div>
 
   <form class="vitals-form" (ngSubmit)="onSubmit()">
@@ -192,12 +192,12 @@
           </div>
           <span class="vital-unit">in</span>
         </div>
-        <p class="vital-hint">Only needed if it has changed</p>
+        <p class="vital-hint">Feet is required; inches only if it's not a whole number of feet</p>
       </div>
     </div>
 
     <div class="submit-section">
-      <button type="submit" class="submit-btn" [disabled]="isSubmitting() || !hasAnyValue">
+      <button type="submit" class="submit-btn" [disabled]="isSubmitting()">
         @if (isSubmitting()) {
           <span class="btn-spinner" aria-hidden="true"></span>
           Submitting…

@@ -69,13 +69,6 @@ export class VitalsComponent {
     return 'Great start. Log again tomorrow to build a streak.';
   });
 
-  /** True once at least one measurement has been entered — gates the submit button. */
-  get hasAnyValue(): boolean {
-    return Object.values(this.vitals).some(
-      (v) => v !== null && v !== undefined && (v as unknown) !== ''
-    );
-  }
-
   /** Gentle, non-blocking flag when a value falls outside the plausible clinical range. */
   outOfRange(value: number | null, min: number, max: number): boolean {
     return value !== null && value !== undefined && (value < min || value > max);
@@ -110,31 +103,27 @@ export class VitalsComponent {
     return errors;
   }
 
-  /** Fields that only make sense together — both filled in or both left blank, never just one. */
-  private readonly pairedFields: Array<{ a: keyof VitalData; b: keyof VitalData; message: string }> = [
-    { a: 'bpSystolic', b: 'bpDiastolic', message: 'Enter both systolic and diastolic blood pressure, or leave blood pressure blank.' }
+  /**
+   * Every vital is mandatory except height-in-inches: a whole number of feet (e.g. 5'0") is
+   * already a complete height, so inches is the one genuinely optional field.
+   */
+  private readonly requiredFields: Array<{ key: keyof VitalData; label: string }> = [
+    { key: 'bpSystolic', label: 'Systolic blood pressure' },
+    { key: 'bpDiastolic', label: 'Diastolic blood pressure' },
+    { key: 'pulse', label: 'Pulse' },
+    { key: 'spo2', label: 'SpO2' },
+    { key: 'temperature', label: 'Temperature' },
+    { key: 'respiratoryRate', label: 'Respiratory rate' },
+    { key: 'weight', label: 'Weight' },
+    { key: 'heightFeet', label: 'Height' }
   ];
 
-  /** Returns a message for every pair where exactly one side was filled in. */
-  private validatePairs(): string[] {
-    const errors: string[] = [];
-    for (const pair of this.pairedFields) {
-      const aFilled = this.vitals[pair.a] !== null && this.vitals[pair.a] !== undefined;
-      const bFilled = this.vitals[pair.b] !== null && this.vitals[pair.b] !== undefined;
-      if (aFilled !== bFilled) {
-        errors.push(pair.message);
-      }
-    }
-
-    // Height is the one asymmetric case: whole feet alone is a complete height (e.g. 5'0"),
-    // but inches alone with no feet isn't.
-    const feetFilled = this.vitals.heightFeet !== null && this.vitals.heightFeet !== undefined;
-    const inchesFilled = this.vitals.heightInches !== null && this.vitals.heightInches !== undefined;
-    if (inchesFilled && !feetFilled) {
-      errors.push('Enter feet along with inches for height.');
-    }
-
-    return errors;
+  /** Returns one message naming every required field that's still empty, or none if all are filled. */
+  private validateRequired(): string[] {
+    const missing = this.requiredFields
+      .filter((f) => this.vitals[f.key] === null || this.vitals[f.key] === undefined)
+      .map((f) => f.label);
+    return missing.length > 0 ? [`Please fill in: ${missing.join(', ')}.`] : [];
   }
 
   /**
@@ -205,7 +194,7 @@ export class VitalsComponent {
       return;
     }
 
-    const validationErrors = [...this.validatePairs(), ...this.validateVitals()];
+    const validationErrors = [...this.validateRequired(), ...this.validateVitals()];
     if (validationErrors.length > 0) {
       this.toast.show(validationErrors.join(' '), 'error', 2500 + validationErrors.length * 1200);
       return;
