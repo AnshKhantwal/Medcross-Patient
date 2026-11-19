@@ -91,45 +91,67 @@ export class VitalsComponent {
     { key: 'weight', label: 'Weight', min: 1, max: 399, unit: 'kg' }
   ];
 
-  /** Returns a message naming the first field that's filled in but out of range, or null if all are fine. */
-  private validateVitals(): string | null {
+  /** Returns a message per out-of-range field that's filled in, so every problem is reported at once. */
+  private validateVitals(): string[] {
+    const errors: string[] = [];
+
     const temp = this.vitals.temperature;
     if (temp !== null && temp !== undefined && (temp <= 80 || temp >= 115)) {
-      return 'Temperature must be between 80 and 115 °F.';
+      errors.push('Temperature must be between 80 and 115 °F.');
     }
 
     for (const rule of this.fieldRules) {
       const value = this.vitals[rule.key] as number | null;
       if (value === null || value === undefined) continue;
       if (value < rule.min || value > rule.max) {
-        return `${rule.label} must be between ${rule.min} and ${rule.max} ${rule.unit}.`;
+        errors.push(`${rule.label} must be between ${rule.min} and ${rule.max} ${rule.unit}.`);
       }
     }
-    return null;
+    return errors;
   }
 
-  /** Truncates the integer part to at most `maxIntDigits` digits and rounds the fraction to `maxDecimals` places. */
-  private clampDigits(value: number, maxIntDigits: number, maxDecimals = 0): number {
-    if (!Number.isFinite(value)) return value;
-    const sign = value < 0 ? -1 : 1;
-    const abs = Math.abs(value);
-    const intPart = Math.trunc(abs);
-    const intStr = intPart.toString();
-    const truncatedInt = intStr.length > maxIntDigits ? Number(intStr.slice(0, maxIntDigits)) : intPart;
-    const frac = abs - intPart;
-    const scale = 10 ** maxDecimals;
-    const roundedFrac = maxDecimals > 0 ? Math.round(frac * scale) / scale : 0;
-    return sign * (truncatedInt + roundedFrac);
+  /**
+   * Bound to (keydown) on the 3-digit-max vitals. Rejects a digit keystroke outright once the
+   * field already has `maxIntDigits` digits (or, for temperature, `maxDecimals` after the point) —
+   * no rewriting/truncating of what was typed, typing past the limit simply does nothing.
+   */
+  onDigitKeydown(event: KeyboardEvent, maxIntDigits: number, allowDecimal = false, maxDecimals = 0): void {
+    if (event.ctrlKey || event.metaKey || event.altKey) return;
+    if (event.key.length > 1) return; // Backspace, Delete, arrows, Tab, etc. are always allowed
+
+    const input = event.target as HTMLInputElement;
+    const value = input.value ?? '';
+    const start = input.selectionStart ?? value.length;
+    const end = input.selectionEnd ?? value.length;
+    if (start !== end) return; // replacing a selection is always allowed
+
+    if (event.key === '.') {
+      if (!allowDecimal || value.includes('.')) event.preventDefault();
+      return;
+    }
+
+    if (!/^[0-9]$/.test(event.key)) return;
+
+    const dotIndex = value.indexOf('.');
+    const isBeforeDecimal = dotIndex === -1 || start <= dotIndex;
+    if (isBeforeDecimal) {
+      const intDigits = dotIndex === -1 ? value.length : dotIndex;
+      if (intDigits >= maxIntDigits) event.preventDefault();
+    } else {
+      const decDigits = value.length - dotIndex - 1;
+      if (decDigits >= maxDecimals) event.preventDefault();
+    }
   }
 
-  /** Bound to (ngModelChange) on the 3-digit-max vitals so typing a 4th digit is rejected live. */
-  onVitalInput(field: 'weight' | 'bpSystolic' | 'bpDiastolic' | 'spo2' | 'pulse' | 'respiratoryRate', value: number | null): void {
-    this.vitals[field] = value === null ? null : this.clampDigits(value, 3);
-  }
-
-  /** Temperature allows up to 3 digits before the decimal point and 2 after it, e.g. 104.25. */
-  onTemperatureInput(value: number | null): void {
-    this.vitals.temperature = value === null ? null : this.clampDigits(value, 3, 2);
+  /** Blocks a paste that would push a field past its digit limit, rather than truncating it. */
+  onDigitPaste(event: ClipboardEvent, maxIntDigits: number, allowDecimal = false, maxDecimals = 0): void {
+    const pasted = event.clipboardData?.getData('text') ?? '';
+    const pattern = allowDecimal
+      ? new RegExp(`^\\d{1,${maxIntDigits}}(\\.\\d{1,${maxDecimals}})?$`)
+      : new RegExp(`^\\d{1,${maxIntDigits}}$`);
+    if (!pattern.test(pasted)) {
+      event.preventDefault();
+    }
   }
 
   constructor(
@@ -156,9 +178,9 @@ export class VitalsComponent {
       return;
     }
 
-    const validationError = this.validateVitals();
-    if (validationError) {
-      this.toast.show(validationError, 'error');
+    const validationErrors = this.validateVitals();
+    if (validationErrors.length > 0) {
+      this.toast.show(validationErrors.join(' '), 'error', 2500 + validationErrors.length * 1200);
       return;
     }
 

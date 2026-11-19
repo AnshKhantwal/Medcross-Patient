@@ -47,13 +47,15 @@
           <div class="vital-input-group">
             <input type="number" class="vital-input" placeholder="120" min="60" max="250" maxlength="3"
                    inputmode="numeric" enterkeyhint="next" aria-label="Systolic (top number)"
-                   [ngModel]="vitals.bpSystolic" (ngModelChange)="onVitalInput('bpSystolic', $event)" name="bpSystolic">
+                   (keydown)="onDigitKeydown($event, 3)" (paste)="onDigitPaste($event, 3)"
+                   [(ngModel)]="vitals.bpSystolic" name="bpSystolic">
           </div>
           <span class="vital-separator">/</span>
           <div class="vital-input-group">
             <input type="number" class="vital-input" placeholder="80" min="40" max="150" maxlength="3"
                    inputmode="numeric" enterkeyhint="next" aria-label="Diastolic (bottom number)"
-                   [ngModel]="vitals.bpDiastolic" (ngModelChange)="onVitalInput('bpDiastolic', $event)" name="bpDiastolic">
+                   (keydown)="onDigitKeydown($event, 3)" (paste)="onDigitPaste($event, 3)"
+                   [(ngModel)]="vitals.bpDiastolic" name="bpDiastolic">
           </div>
           <span class="vital-unit">mmHg</span>
         </div>
@@ -72,7 +74,8 @@
           <div class="vital-input-group">
             <input id="pulse" type="number" class="vital-input" placeholder="72" min="40" max="200" maxlength="3"
                    inputmode="numeric" enterkeyhint="next"
-                   [ngModel]="vitals.pulse" (ngModelChange)="onVitalInput('pulse', $event)" name="pulse">
+                   (keydown)="onDigitKeydown($event, 3)" (paste)="onDigitPaste($event, 3)"
+                   [(ngModel)]="vitals.pulse" name="pulse">
           </div>
           <span class="vital-unit">bpm</span>
         </div>
@@ -91,7 +94,8 @@
           <div class="vital-input-group">
             <input id="spo2" type="number" class="vital-input" placeholder="98" min="70" max="100" maxlength="3"
                    inputmode="numeric" enterkeyhint="next"
-                   [ngModel]="vitals.spo2" (ngModelChange)="onVitalInput('spo2', $event)" name="spo2">
+                   (keydown)="onDigitKeydown($event, 3)" (paste)="onDigitPaste($event, 3)"
+                   [(ngModel)]="vitals.spo2" name="spo2">
           </div>
           <span class="vital-unit">%</span>
         </div>
@@ -112,9 +116,10 @@
         </label>
         <div class="vital-inputs">
           <div class="vital-input-group">
-            <input id="temperature" type="number" class="vital-input" placeholder="98.6" min="90" max="110" step="0.01"
+            <input id="temperature" type="number" class="vital-input" placeholder="98.6" min="90" max="110" step="0.01" maxlength="6"
                    inputmode="decimal" enterkeyhint="next"
-                   [ngModel]="vitals.temperature" (ngModelChange)="onTemperatureInput($event)" name="temperature">
+                   (keydown)="onDigitKeydown($event, 3, true, 2)" (paste)="onDigitPaste($event, 3, true, 2)"
+                   [(ngModel)]="vitals.temperature" name="temperature">
           </div>
           <span class="vital-unit">°F</span>
         </div>
@@ -137,7 +142,8 @@
           <div class="vital-input-group">
             <input id="respiratoryRate" type="number" class="vital-input" placeholder="16" min="8" max="40" maxlength="3"
                    inputmode="numeric" enterkeyhint="next"
-                   [ngModel]="vitals.respiratoryRate" (ngModelChange)="onVitalInput('respiratoryRate', $event)" name="respiratoryRate">
+                   (keydown)="onDigitKeydown($event, 3)" (paste)="onDigitPaste($event, 3)"
+                   [(ngModel)]="vitals.respiratoryRate" name="respiratoryRate">
           </div>
           <span class="vital-unit">breaths/min</span>
         </div>
@@ -154,9 +160,10 @@
         </label>
         <div class="vital-inputs">
           <div class="vital-input-group">
-            <input id="weight" type="number" class="vital-input" placeholder="70" min="0" step="0.1" maxlength="3"
+            <input id="weight" type="number" class="vital-input" placeholder="70" min="0" step="0.1" maxlength="5"
                    inputmode="decimal" enterkeyhint="next"
-                   [ngModel]="vitals.weight" (ngModelChange)="onVitalInput('weight', $event)" name="weight">
+                   (keydown)="onDigitKeydown($event, 3, true, 1)" (paste)="onDigitPaste($event, 3, true, 1)"
+                   [(ngModel)]="vitals.weight" name="weight">
           </div>
           <span class="vital-unit">kg</span>
         </div>
