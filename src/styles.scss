@@ -179,10 +179,15 @@ button:not(:disabled):active {
 }
 
 /* Every routed page eases in, so moving between tabs feels like one app
-   instead of a hard swap. */
+   instead of a hard swap. No fill-mode: a lingering `forwards`/`both` fill
+   keeps the transform "active" (computed as a matrix, never genuinely
+   `none`) after the animation ends, which makes this element a containing
+   block for any `position: fixed` descendant (e.g. a success modal) instead
+   of leaving fixed children pinned to the real viewport. */
 .route-content > * {
   display: block;
-  animation: pageIn 0.28s ease-out both;
+  opacity: 1;
+  animation: pageIn 0.28s ease-out;
 }
 
 @keyframes pageIn {

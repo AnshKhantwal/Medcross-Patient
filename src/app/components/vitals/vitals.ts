@@ -110,6 +110,25 @@ export class VitalsComponent {
     return errors;
   }
 
+  /** Fields that only make sense together — both filled in or both left blank, never just one. */
+  private readonly pairedFields: Array<{ a: keyof VitalData; b: keyof VitalData; message: string }> = [
+    { a: 'bpSystolic', b: 'bpDiastolic', message: 'Enter both systolic and diastolic blood pressure, or leave blood pressure blank.' },
+    { a: 'heightFeet', b: 'heightInches', message: 'Enter both feet and inches for height, or leave height blank.' }
+  ];
+
+  /** Returns a message for every pair where exactly one side was filled in. */
+  private validatePairs(): string[] {
+    const errors: string[] = [];
+    for (const pair of this.pairedFields) {
+      const aFilled = this.vitals[pair.a] !== null && this.vitals[pair.a] !== undefined;
+      const bFilled = this.vitals[pair.b] !== null && this.vitals[pair.b] !== undefined;
+      if (aFilled !== bFilled) {
+        errors.push(pair.message);
+      }
+    }
+    return errors;
+  }
+
   /**
    * Bound to (keydown) on the 3-digit-max vitals. Rejects a digit keystroke outright once the
    * field already has `maxIntDigits` digits (or, for temperature, `maxDecimals` after the point) —
@@ -178,7 +197,7 @@ export class VitalsComponent {
       return;
     }
 
-    const validationErrors = this.validateVitals();
+    const validationErrors = [...this.validatePairs(), ...this.validateVitals()];
     if (validationErrors.length > 0) {
       this.toast.show(validationErrors.join(' '), 'error', 2500 + validationErrors.length * 1200);
       return;
