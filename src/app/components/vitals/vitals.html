@@ -140,9 +140,9 @@
         </label>
         <div class="vital-inputs">
           <div class="vital-input-group">
-            <input id="respiratoryRate" type="number" class="vital-input" placeholder="16" min="8" max="40" maxlength="3"
+            <input id="respiratoryRate" type="number" class="vital-input" placeholder="16" min="8" max="40" maxlength="2"
                    inputmode="numeric" enterkeyhint="next"
-                   (keydown)="onDigitKeydown($event, 3)" (paste)="onDigitPaste($event, 3)"
+                   (keydown)="onDigitKeydown($event, 2)" (paste)="onDigitPaste($event, 2)"
                    [(ngModel)]="vitals.respiratoryRate" name="respiratoryRate">
           </div>
           <span class="vital-unit">breaths/min</span>
@@ -180,14 +180,16 @@
         </span>
         <div class="vital-inputs" role="group" aria-labelledby="height-label">
           <div class="vital-input-group">
-            <input type="number" class="vital-input" placeholder="5" min="0" max="8"
+            <input type="number" class="vital-input" placeholder="5" min="1" max="8" maxlength="1"
                    inputmode="numeric" enterkeyhint="next" aria-label="Feet"
+                   (keydown)="onDigitKeydown($event, 1)" (paste)="onDigitPaste($event, 1)"
                    [(ngModel)]="vitals.heightFeet" name="heightFeet">
           </div>
           <span class="vital-unit">ft</span>
           <div class="vital-input-group">
-            <input type="number" class="vital-input" placeholder="8" min="0" max="11"
+            <input type="number" class="vital-input" placeholder="8" min="0" max="11" maxlength="2"
                    inputmode="numeric" enterkeyhint="done" aria-label="Inches"
+                   (keydown)="onDigitKeydown($event, 2)" (paste)="onDigitPaste($event, 2)"
                    [(ngModel)]="vitals.heightInches" name="heightInches">
           </div>
           <span class="vital-unit">in</span>

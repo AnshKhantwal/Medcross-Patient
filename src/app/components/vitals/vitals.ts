@@ -81,7 +81,9 @@ export class VitalsComponent {
     { key: 'pulse', label: 'Pulse', min: 1, max: 299, unit: 'bpm' },
     { key: 'spo2', label: 'SpO2', min: 1, max: 100, unit: '%' },
     { key: 'respiratoryRate', label: 'Respiratory rate', min: 1, max: 99, unit: 'breaths/min' },
-    { key: 'weight', label: 'Weight', min: 1, max: 399, unit: 'kg' }
+    { key: 'weight', label: 'Weight', min: 1, max: 399, unit: 'kg' },
+    { key: 'heightFeet', label: 'Height (feet)', min: 1, max: 8, unit: 'ft' },
+    { key: 'heightInches', label: 'Height (inches)', min: 0, max: 11, unit: 'in' }
   ];
 
   /** Returns a message per out-of-range field that's filled in, so every problem is reported at once. */
